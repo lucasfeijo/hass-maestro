@@ -5,7 +5,7 @@ COPY swift/ ./
 RUN swift build -c release --static-swift-stdlib
 
 FROM $BUILD_FROM
-RUN apk add --no-cache libc6-compat libstdc++
+RUN apk add --no-cache libc6-compat libstdc++ gcompat
 COPY rootfs /
 COPY --from=build /usr/src/app/.build/release/maestro /usr/bin/maestro
 ENTRYPOINT ["/init"]
