@@ -1,5 +1,5 @@
 name: Hass Maestro
-version: "1.0.3"
+version: "1.0.4"
 slug: maestro
 description: Home Assistant lights orchestrator
 url: https://github.com/lucasfeijo/hass-maestro
@@ -11,3 +11,22 @@ homeassistant_api: true
 ports:
   8080/tcp: 8080
 image: "ghcr.io/lucasfeijo/{arch}-addon-maestro"
+
+# Default option values exposed to the add-on UI. These are forwarded as
+# command line arguments to the Swift server via the service script.
+options:
+  baseurl: http://homeassistant.local:8123/
+  token: ''
+  simulate: false
+  no_notify: false
+  program: default
+  verbose: false
+
+# Option schema used by Home Assistant to validate user input.
+schema:
+  baseurl: str?
+  token: str?
+  simulate: bool
+  no_notify: bool
+  program: str?
+  verbose: bool
