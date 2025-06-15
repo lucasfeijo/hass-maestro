@@ -1,0 +1,3 @@
+#!/usr/bin/with-contenv bashio
+# Start Hass Maestro Swift server
+exec /usr/bin/maestro
