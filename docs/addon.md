@@ -61,7 +61,7 @@ The add-on manifest defines the image, startup behavior and option schema. Examp
 
 ```yaml
 name: Maestro
-version: "0.1.3"
+version: "1.0.0"
 slug: maestro
 description: Home Assistant lights orchestrator
 startup: application
@@ -123,7 +123,7 @@ the `maestro` directory and pushes it to GitHub Container Registry whenever a
 new tag is pushed.
 
 1. Commit the workflow to your repository.
-2. Create a tag such as `v0.1.3` and push it to GitHub.
+2. Create a tag such as `v1.0.0` and push it to GitHub.
 3. The action builds `ghcr.io/<owner>/maestro:<tag>` and pushes the image.
 
 Home Assistant can then install the add-on using that image reference in
