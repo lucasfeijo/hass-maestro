@@ -1,7 +1,7 @@
 name: Hass Maestro
 version: "0.1.0"
 slug: maestro
-description: Swift server providing /run endpoint
+description: Home Assistant lights orchestrator
 url: https://github.com/lucasfeijo/hass-maestro
 arch:
   - aarch64
