@@ -1,9 +1,10 @@
 name: Hass Maestro
-version: "1.0.30"
+version: "1.0.31"
 slug: maestro
 description: Home Assistant lights orchestrator
 url: https://github.com/lucasfeijo/hass-maestro
 arch:
+  - aarch64
   - amd64
 init: false
 startup: services
