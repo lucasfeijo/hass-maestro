@@ -19,37 +19,6 @@ public final class Maestro {
         self.verbose = verbose
     }
 
-    /// Convenience initializer that builds the required pipeline components
-    /// from a set of `MaestroOptions` as parsed from the command line.
-    convenience init(options: MaestroOptions) {
-        let notificationPusher: NotificationPusher? = options.notificationsEnabled ?
-            HomeAssistantNotificationPusher(baseURL: options.baseURL, token: options.token) : nil
-        let logger = Logger(pusher: notificationPusher)
-
-        let states = HomeAssistantStateProvider(baseURL: options.baseURL, token: options.token)
-
-        let lights: LightController
-        if options.simulate {
-            lights = LoggingLightController()
-        } else {
-            let haLights = HomeAssistantLightController(baseURL: options.baseURL,
-                                                       token: options.token,
-                                                       logger: logger)
-            lights = options.verbose ?
-                MultiLightController([haLights, LoggingLightController()]) :
-                haLights
-        }
-
-        let program: LightProgram
-        switch options.programName.lowercased() {
-        case LightProgramSecondary().name:
-            program = LightProgramSecondary()
-        default:
-            program = LightProgramDefault()
-        }
-
-        self.init(states: states, lights: lights, program: program, logger: logger, verbose: options.verbose)
-    }
 
     /// Fetches state from Home Assistant and applies the current scene.
     /// 
