@@ -3,16 +3,18 @@ FROM ${BUILD_FROM} as build
 
 # Install Swiftly and Swift
 RUN apk add --no-cache \
-    wget \
-    && wget -q https://swift.org/swiftly/swiftly-install.sh \
-    && chmod +x swiftly-install.sh \
-    && ./swiftly-install.sh \
-    && rm swiftly-install.sh \
+    curl \
+    bash \
+    && curl -O https://download.swift.org/swiftly/linux/swiftly-$(uname -m).tar.gz \
+    && tar zxf swiftly-$(uname -m).tar.gz \
+    && ./swiftly init --quiet-shell-followup \
+    && . "${SWIFTLY_HOME_DIR:-$HOME/.local/share/swiftly}/env.sh" \
+    && hash -r \
     && swiftly install 5.7
 
 WORKDIR /usr/src/app
 COPY swift/ ./
-RUN swiftly run swift build -c release
+RUN . "${SWIFTLY_HOME_DIR:-$HOME/.local/share/swiftly}/env.sh" && swift build -c release
 
 FROM ${BUILD_FROM}
 COPY rootfs /
