@@ -32,14 +32,6 @@ swift run maestro
 The package builds on Linux and macOS. On macOS the POSIX server code uses the
 `Darwin` module, so the same command works there as well.
 
-### Runtime dependencies
-
-When running the Home Assistant add-on the container image is based on Alpine
-Linux. The server executable is built against glibc, so the runtime image needs
-glibc compatibility libraries. The provided Dockerfile installs `libc6-compat`
-and `gcompat` to supply these libraries. If you maintain a custom image ensure
-these packages are present or compile the server against musl instead.
-
 ## Requesting the server
 
 ### `GET /run`
