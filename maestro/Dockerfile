@@ -2,7 +2,7 @@ ARG BUILD_FROM
 FROM ${BUILD_FROM} as build
 
 # Install Swiftly and Swift
-RUN apt-get update && apt-get install -y \
+RUN apk add --no-cache \
     wget \
     && wget -q https://swift.org/swiftly/swiftly-install.sh \
     && chmod +x swiftly-install.sh \
