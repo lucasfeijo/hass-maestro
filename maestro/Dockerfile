@@ -1,11 +1,14 @@
 ARG BUILD_FROM
-FROM swift:5.7-slim as build
+FROM swift:5.7-alpine as build
 WORKDIR /usr/src/app
 COPY swift/ ./
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    libfts-dev \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache \
+    linux-headers \
+    musl-dev \
+    gcc \
+    g++ \
+    make \
+    libc-dev
 RUN swift build -c release --static-swift-stdlib
 
 FROM $BUILD_FROM
