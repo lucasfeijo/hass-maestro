@@ -1,3 +1,33 @@
 #!/usr/bin/with-contenv bashio
-# Start Hass Maestro Swift server
-exec /usr/bin/maestro
+# Start Hass Maestro Swift server with options from the add-on configuration.
+
+ARGS=()
+
+BASEURL=$(bashio::config 'baseurl')
+if [ -n "$BASEURL" ]; then
+    ARGS+=(--baseurl "$BASEURL")
+fi
+
+TOKEN=$(bashio::config 'token')
+if [ -n "$TOKEN" ]; then
+    ARGS+=(--token "$TOKEN")
+fi
+
+if bashio::config.true 'simulate'; then
+    ARGS+=(--simulate)
+fi
+
+if bashio::config.true 'no_notify'; then
+    ARGS+=(--no-notify)
+fi
+
+PROGRAM=$(bashio::config 'program')
+if [ -n "$PROGRAM" ]; then
+    ARGS+=(--program "$PROGRAM")
+fi
+
+if bashio::config.true 'verbose'; then
+    ARGS+=(--verbose)
+fi
+
+exec /usr/bin/maestro "${ARGS[@]}"
