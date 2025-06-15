@@ -2,7 +2,7 @@ name: Hass Maestro
 version: "0.1.0"
 slug: maestro
 description: Swift server providing /run endpoint
-url: https://github.com/user/hass-maestro
+url: https://github.com/lucasfeijo/hass-maestro
 arch:
   - aarch64
   - amd64
@@ -13,4 +13,4 @@ options: {}
 schema: {}
 ports:
   8080/tcp: 8080
-image: "ghcr.io/user/{arch}-addon-maestro"
+image: "ghcr.io/lucasfeijo/{arch}-addon-maestro"
