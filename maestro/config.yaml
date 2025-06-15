@@ -1,5 +1,5 @@
 name: Hass Maestro
-version: "1.0.7"
+version: "1.0.8"
 slug: maestro
 description: Home Assistant lights orchestrator
 url: https://github.com/lucasfeijo/hass-maestro
