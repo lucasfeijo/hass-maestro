@@ -1,14 +1,20 @@
 ARG BUILD_FROM
-ARG TARGETPLATFORM
+FROM ${BUILD_FROM} as build
 
-FROM --platform=$TARGETPLATFORM swift:6.1-focal AS build
+# Install Swiftly and Swift
+RUN apt-get update && apt-get install -y \
+    wget \
+    && wget -q https://swift.org/swiftly/swiftly-install.sh \
+    && chmod +x swiftly-install.sh \
+    && ./swiftly-install.sh \
+    && rm swiftly-install.sh \
+    && swiftly install 5.7
+
 WORKDIR /usr/src/app
 COPY swift/ ./
-RUN swift build -c release --static-swift-stdlib
+RUN swiftly run swift build -c release
 
 FROM ${BUILD_FROM}
-RUN apk add --no-cache libc6-compat gcompat libstdc++ zlib
-COPY rootfs/ /
+COPY rootfs /
 COPY --from=build /usr/src/app/.build/release/maestro /usr/bin/maestro
-RUN chmod +x /usr/bin/maestro
 ENTRYPOINT ["/init"]
