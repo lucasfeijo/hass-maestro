@@ -5,8 +5,9 @@ COPY swift/ ./
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     libc6-dev \
+    libfts-dev \
     && rm -rf /var/lib/apt/lists/*
-RUN swift build -c release --static-swift-stdlib
+RUN swift build -c release --static-swift-stdlib -Xlinker -static-libgcc
 
 FROM $BUILD_FROM
 RUN apk add --no-cache libc6-compat libstdc++ \
