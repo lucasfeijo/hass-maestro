@@ -9,7 +9,9 @@ RUN apt-get update && \
 RUN swift build -c release --static-swift-stdlib
 
 FROM $BUILD_FROM
-RUN apk add --no-cache libc6-compat libstdc++ gcompat \
+RUN apk add --no-cache libc6-compat libstdc++ \
+    && apk add --no-cache --repository https://dl-cdn.alpinelinux.org/alpine/edge/main \
+       --repository https://dl-cdn.alpinelinux.org/alpine/edge/community gcompat \
     && mkdir -p /lib64 \
     && ln -sf /lib/ld-linux-x86-64.so.2 /lib64/ld-linux-x86-64.so.2
 COPY rootfs /
