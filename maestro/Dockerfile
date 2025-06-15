@@ -13,7 +13,9 @@ RUN apk add --no-cache libc6-compat libstdc++ \
     && apk add --no-cache --repository https://dl-cdn.alpinelinux.org/alpine/edge/main \
        --repository https://dl-cdn.alpinelinux.org/alpine/edge/community \
        gcompat \
-       libfts
+       musl-dev \
+    && mkdir -p /lib64 \
+    && ln -sf /lib/ld-linux-x86-64.so.2 /lib64/ld-linux-x86-64.so.2
 COPY rootfs /
 COPY --from=build /usr/src/app/.build/release/maestro /usr/bin/maestro
 ENTRYPOINT ["/init"]
