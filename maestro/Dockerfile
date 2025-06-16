@@ -15,6 +15,6 @@ FROM ${BUILD_FROM}
 RUN apk add --no-cache libc6-compat
 
 COPY rootfs/ /
-COPY --from=build /usr/src/app/.build/release/maestro /usr/bin/maestro
+COPY --from=build /usr/src/app/.build /usr/src/app/.build
 
 ENTRYPOINT ["/init"]
