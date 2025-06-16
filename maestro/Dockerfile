@@ -4,14 +4,12 @@ ARG TARGETARCH
 
 FROM ${BUILD_FROM} AS build
 
-# install curl/bash, + glibc shim only on arm64
+# Install curl/bash and glibc shim only on arm64
 RUN apk add --no-cache curl bash \
-    && if [ "$TARGETARCH" = "arm64" ]; then apk add --no-cache libc6-compat; fi \
-    && curl -O https://download.swift.org/swiftly/linux/swiftly-$(uname -m).tar.gz \
-    && tar zxf swiftly-$(uname -m).tar.gz \
+    && if [ "$TARGETARCH" = "aarch64" ]; then apk add --no-cache libc6-compat; fi \
+    && curl -sSL https://download.swift.org/swiftly/linux/swiftly-$(uname -m).tar.gz | tar xz \
     && ./swiftly init --quiet-shell-followup \
     && . "${SWIFTLY_HOME_DIR:-$HOME/.local/share/swiftly}/env.sh" \
-    && hash -r \
     && swiftly install 5.7
 
 WORKDIR /usr/src/app
@@ -21,9 +19,9 @@ RUN . "${SWIFTLY_HOME_DIR:-$HOME/.local/share/swiftly}/env.sh" \
 
 FROM ${BUILD_FROM}
 
-# runtime glibc shim only on arm64
+# Provide glibc shim at runtime only on arm64
 ARG TARGETARCH
-RUN if [ "$TARGETARCH" = "arm64" ]; then apk add --no-cache libc6-compat; fi
+RUN if [ "$TARGETARCH" = "aarch64" ]; then apk add --no-cache libc6-compat; fi
 
 COPY rootfs/ /
 COPY --from=build /usr/src/app/.build/release/maestro /usr/bin/maestro
