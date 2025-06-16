@@ -30,4 +30,4 @@ if bashio::config.true 'verbose'; then
     ARGS+=(--verbose)
 fi
 
-exec /usr/bin/maestro "${ARGS[@]}"
+exec /usr/src/app/.build/release/maestro "${ARGS[@]}"
