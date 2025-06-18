@@ -12,7 +12,7 @@ import ucrt
 #endif
 /// Minimal HTTP server handling GET requests from Home Assistant.
 func startServer(on port: Int32, maestro: Maestro) throws {
-#if os(Linux)
+#if canImport(Musl)
     let serverFD = socket(AF_INET, Int32(SOCK_STREAM.rawValue), 0)
 #else
     let serverFD = socket(AF_INET, SOCK_STREAM, 0)
