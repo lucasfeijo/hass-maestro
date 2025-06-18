@@ -54,10 +54,20 @@ jobs:
             echo "changed=true" >> $GITHUB_OUTPUT;
             echo "addons=[$changed]" >> $GITHUB_OUTPUT;
           else
-            echo "No add-on had any monitored files changed (${{ env.MONITORED_FILES }})";
+          echo "No add-on had any monitored files changed (${{ env.MONITORED_FILES }})";
           fi
-  build:
+  test:
     needs: init
+    runs-on: ubuntu-latest
+    name: Run Swift tests
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4.2.2
+      - name: Run swift test
+        run: swift test --enable-code-coverage
+        working-directory: ./maestro/swift
+  build:
+    needs: [init, test]
     runs-on: ubuntu-latest
     if: needs.init.outputs.changed == 'true'
     name: Build ${{ matrix.arch }} ${{ matrix.addon }} add-on
