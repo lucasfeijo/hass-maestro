@@ -1,10 +1,15 @@
 import Foundation
-#if os(Linux)
-import Glibc
-#else
+#if os(macOS) || os(iOS)
 import Darwin
+#elseif canImport(Glibc)
+import Glibc
+#elseif canImport(Musl)
+import Musl
+#elseif os(Windows)
+import ucrt
+#else
+#error(Unknown platform)
 #endif
-
 /// Minimal HTTP server handling GET requests from Home Assistant.
 func startServer(on port: Int32, maestro: Maestro) throws {
 #if os(Linux)
