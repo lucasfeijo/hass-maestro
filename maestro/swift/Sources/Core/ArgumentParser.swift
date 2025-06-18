@@ -13,6 +13,7 @@ struct MaestroOptions {
 func parseArguments(_ args: [String]) -> MaestroOptions {
     var options = MaestroOptions()
     var idx = 1
+    var tokenSupplied = false
     while idx < args.count {
         let arg = args[idx]
         if arg.hasPrefix("--baseurl=") {
@@ -23,9 +24,11 @@ func parseArguments(_ args: [String]) -> MaestroOptions {
             if let url = URL(string: args[idx]) { options.baseURL = url }
         } else if arg.hasPrefix("--token=") {
             options.token = String(arg.dropFirst("--token=".count))
+            tokenSupplied = true
         } else if arg == "--token", idx + 1 < args.count {
             idx += 1
             options.token = args[idx]
+            tokenSupplied = true
         } else if arg == "--simulate" {
             options.simulate = true
         } else if arg.hasPrefix("--program=") {
@@ -45,6 +48,11 @@ func parseArguments(_ args: [String]) -> MaestroOptions {
             if let p = Int32(args[idx]) { options.port = p }
         }
         idx += 1
+    }
+    if !tokenSupplied && options.token == nil {
+        if let envToken = ProcessInfo.processInfo.environment["SUPERVISOR_TOKEN"], !envToken.isEmpty {
+            options.token = envToken
+        }
     }
     return options
 }
