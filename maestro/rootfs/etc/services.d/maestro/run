@@ -30,4 +30,19 @@ if bashio::config.true 'verbose'; then
     ARGS+=(--verbose)
 fi
 
+echo "Debug: verifying maestro binary paths..." >&2
+if [ -f /usr/src/app/.build/release/maestro ]; then
+    echo "Found binary at /usr/src/app/.build/release/maestro" >&2
+else
+    echo "Binary missing at /usr/src/app/.build/release/maestro" >&2
+    ls -al /usr/src/app/.build/release >&2 || true
+fi
+
+if [ -f /usr/bin/maestro ]; then
+    echo "Found binary at /usr/bin/maestro" >&2
+else
+    echo "Binary missing at /usr/bin/maestro" >&2
+    ls -al /usr/bin >&2 || true
+fi
+
 exec /usr/src/app/.build/release/maestro "${ARGS[@]}"
