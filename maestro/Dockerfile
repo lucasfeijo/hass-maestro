@@ -5,7 +5,7 @@ FROM swift:5.7 AS build
 
 WORKDIR /usr/src/app
 COPY swift/ ./
-RUN swift build -c release --static-swift-stdlib
+RUN swift build -c release --static-swift-stdlib --swift-sdk aarch64-swift-linux-musl
 
 # 2. Runtime on your Home-Assistant base
 FROM ${BUILD_FROM}
