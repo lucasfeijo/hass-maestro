@@ -7,11 +7,13 @@ RUN swift sdk install https://download.swift.org/swift-6.1.2-release/static-sdk/
 
 WORKDIR /usr/src/app
 COPY swift/ ./
-RUN swift build -c release --swift-sdk aarch64-swift-linux-musl
+RUN swift build -c release --swift-sdk aarch64-swift-linux-musl \
+    && ls -al /usr/src/app/.build/release
 
 FROM ${BUILD_FROM}
 
 COPY rootfs/ /
 COPY --from=build /usr/src/app/.build/release/maestro /usr/bin/maestro
+RUN ls -al /usr/bin/maestro
 
 ENTRYPOINT ["/init"]
