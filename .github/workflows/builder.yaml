@@ -68,8 +68,10 @@ jobs:
         with:
           swift-version: '6.1'
       - name: Build
+        working-directory: maestro/swift
         run: swift build -v
       - name: Test
+        working-directory: maestro/swift
         run: swift test -v
   build:
     needs: [init, swift-test]
