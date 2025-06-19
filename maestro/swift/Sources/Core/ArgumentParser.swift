@@ -1,58 +1,49 @@
 import Foundation
+import ArgumentParser
 
-struct MaestroOptions {
+extension URL: ExpressibleByArgument {
+    public init?(argument: String) {
+        self.init(string: argument)
+    }
+}
+
+struct MaestroOptions: ParsableArguments {
+    @Option(name: .customLong("baseurl"), help: "Base URL for the Home Assistant instance")
     var baseURL: URL = URL(string: "http://homeassistant.local:8123/")!
-    var token: String? = nil
+
+    @Option(name: .long, help: "Long-lived Home Assistant token used for API calls")
+    var token: String?
+
+    @Flag(name: .long, help: "Print light commands instead of sending them")
     var simulate: Bool = false
+
+    @Option(name: .customLong("program"), help: "Light program to run")
     var programName: String = "default"
-    var notificationsEnabled: Bool = true
+
+    @Flag(name: [.customLong("no-notify"), .customLong("disable-notifications")], help: "Disable Home Assistant persistent notifications on failures")
+    var noNotify: Bool = false
+
+    @Option(name: .long, help: "Port for the HTTP server")
     var port: Int32 = 8080
+
+    @Flag(name: .long, help: "Enable verbose logging")
     var verbose: Bool = false
+
+    var notificationsEnabled: Bool { !noNotify }
 }
 
 func parseArguments(_ args: [String]) -> MaestroOptions {
-    var options = MaestroOptions()
-    var idx = 1
-    var tokenSupplied = false
-    while idx < args.count {
-        let arg = args[idx]
-        if arg.hasPrefix("--baseurl=") {
-            let value = String(arg.dropFirst("--baseurl=".count))
-            if let url = URL(string: value) { options.baseURL = url }
-        } else if arg == "--baseurl", idx + 1 < args.count {
-            idx += 1
-            if let url = URL(string: args[idx]) { options.baseURL = url }
-        } else if arg.hasPrefix("--token=") {
-            options.token = String(arg.dropFirst("--token=".count))
-            tokenSupplied = true
-        } else if arg == "--token", idx + 1 < args.count {
-            idx += 1
-            options.token = args[idx]
-            tokenSupplied = true
-        } else if arg == "--simulate" {
-            options.simulate = true
-        } else if arg.hasPrefix("--program=") {
-            options.programName = String(arg.dropFirst("--program=".count))
-        } else if arg == "--program", idx + 1 < args.count {
-            idx += 1
-            options.programName = args[idx]
-        } else if arg == "--no-notify" || arg == "--disable-notifications" {
-            options.notificationsEnabled = false
-        } else if arg == "--verbose" {
-            options.verbose = true
-        } else if arg.hasPrefix("--port=") {
-            let value = String(arg.dropFirst("--port=".count))
-            if let p = Int32(value) { options.port = p }
-        } else if arg == "--port", idx + 1 < args.count {
-            idx += 1
-            if let p = Int32(args[idx]) { options.port = p }
+    do {
+        var options = try MaestroOptions.parse(Array(args.dropFirst()))
+        if options.token == nil {
+            if let envToken = ProcessInfo.processInfo.environment["SUPERVISOR_TOKEN"], !envToken.isEmpty {
+                options.token = envToken
+            }
         }
-        idx += 1
+        return options
+    } catch {
+        fatalError("Failed to parse arguments: \(error)")
     }
-    if !tokenSupplied && options.token == nil {
-        if let envToken = ProcessInfo.processInfo.environment["SUPERVISOR_TOKEN"], !envToken.isEmpty {
-            options.token = envToken
-        }
-    }
-    return options
 }
+
+
