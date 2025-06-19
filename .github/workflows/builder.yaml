@@ -56,8 +56,23 @@ jobs:
           else
             echo "No add-on had any monitored files changed (${{ env.MONITORED_FILES }})";
           fi
-  build:
+  swift-test:
     needs: init
+    runs-on: ubuntu-latest
+    name: Build and test Swift application
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4.2.2
+      - name: Set up Swift
+        uses: swift-actions/setup-swift@v1
+        with:
+          swift-version: '5.7'
+      - name: Build
+        run: swift build -v
+      - name: Test
+        run: swift test -v
+  build:
+    needs: [init, swift-test]
     runs-on: ubuntu-latest
     if: needs.init.outputs.changed == 'true'
     name: Build ${{ matrix.arch }} ${{ matrix.addon }} add-on
