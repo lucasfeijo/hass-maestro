@@ -79,9 +79,9 @@ jobs:
         with:
           path: "./${{ matrix.addon }}"
 
-        - name: Check if add-on should be built
-          id: check
-          run: |
+      - name: Check if add-on should be built
+        id: check
+        run: |
             if [[ "${{ steps.info.outputs.image }}" == "null" ]]; then
               echo "Image property is not defined, skipping build"
               echo "build_arch=false" >> $GITHUB_OUTPUT;
@@ -96,13 +96,13 @@ jobs:
               echo "build_arch=false" >> $GITHUB_OUTPUT;
             fi
 
-        - name: Set up Swift
-          uses: swift-actions/setup-swift@v2
-          with:
-            swift-version: "6.1"
+      - name: Set up Swift
+        uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: "6.1"
 
-        - name: Run unit tests
-          run: swift test --package-path maestro/swift
+      - name: Run unit tests
+        run: swift test --package-path maestro/swift
 
       - name: Login to GitHub Container Registry
         if: env.BUILD_ARGS != '--test'
