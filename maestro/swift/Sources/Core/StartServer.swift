@@ -10,13 +10,23 @@ import ucrt
 #else
 #error("Unknown platform")
 #endif
+
+/// Helper function to get SOCK_STREAM value that works across different platforms
+private func getSockStream() -> Int32 {
+    #if os(Linux)
+    #if canImport(Musl)
+    return Int32(SOCK_STREAM.rawValue)
+    #else
+    return Int32(SOCK_STREAM)
+    #endif
+    #else
+    return Int32(SOCK_STREAM)
+    #endif
+}
+
 /// Minimal HTTP server handling GET requests from Home Assistant.
 func startServer(on port: Int32, maestro: Maestro) throws {
-    #if os(Linux)
-    let serverFD = socket(AF_INET, SOCK_STREAM, 0)
-    #else
-    let serverFD = socket(AF_INET, Int32(SOCK_STREAM), 0)
-    #endif
+    let serverFD = socket(AF_INET, getSockStream(), 0)
     guard serverFD >= 0 else { fatalError("Unable to create socket") }
 
     var value: Int32 = 1
