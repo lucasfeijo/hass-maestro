@@ -12,9 +12,14 @@ import ucrt
 #endif
 /// Minimal HTTP server handling GET requests from Home Assistant.
 func startServer(on port: Int32, maestro: Maestro) throws {
-    // SOCK_STREAM is an enum on modern glibc; use its raw value when
-    // converting to `Int32`.
+    // SOCK_STREAM became an enum in newer Swift/Glibc versions.  Older toolchains
+    // expect the plain integer constant.  Use conditional compilation so the code
+    // builds across Swift versions.
+#if swift(>=5.10)
     let serverFD = socket(AF_INET, Int32(SOCK_STREAM.rawValue), 0)
+#else
+    let serverFD = socket(AF_INET, Int32(SOCK_STREAM), 0)
+#endif
     guard serverFD >= 0 else { fatalError("Unable to create socket") }
 
     var value: Int32 = 1
