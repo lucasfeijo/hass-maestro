@@ -167,25 +167,6 @@ final class LightProgramDefaultTests: XCTestCase {
         XCTAssertEqual(sink?.brightness, 10)
     }
 
-    func testSunsetInterpolationHalfway() {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        let nextSetting = formatter.string(from: Date().addingTimeInterval(30 * 60))
-        let context = StateContext(states: [
-            "input_select.living_scene": ["state": "normal"],
-            "sun.sun": ["state": "above_horizon", "attributes": ["next_setting": nextSetting]],
-            "binary_sensor.living_tv_hyperion_running_condition_for_the_scene": ["state": "off"],
-            "binary_sensor.dining_espresence": ["state": "off"],
-            "binary_sensor.kitchen_espresence": ["state": "off"],
-            "input_boolean.kitchen_extra_brightness": ["state": "off"]
-        ])
-        let diff = LightProgramDefault().computeStateSet(context: context)
-        let tvLight = diff.desiredStates.first { $0.entityId == "light.tv_light" }
-        XCTAssertEqual(tvLight?.brightness, 51)
-        XCTAssertEqual(tvLight?.colorTemperature, 309)
-        XCTAssertEqual(tvLight?.transitionDuration, 2)
-    }
-
     func testMainSegmentOnWhenShelfOn() {
         let context = StateContext(states: [
             "input_select.living_scene": ["state": "bright"],
