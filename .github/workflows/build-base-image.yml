@@ -29,21 +29,21 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
-    - name: Check if image already exists
-      id: check-image
-      run: |
-        # Check if the specific version tag already exists for both platforms
-        if docker manifest inspect ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.SWIFT_VERSION }} >/dev/null 2>&1; then
-          # Check if it's a multi-platform image
-          MANIFEST=$(docker manifest inspect ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.SWIFT_VERSION }})
-          if echo "$MANIFEST" | jq -e '.manifests | length > 1' >/dev/null 2>&1; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
-          fi
-        else
-          echo "exists=false" >> $GITHUB_OUTPUT
-        fi
+    # - name: Check if image already exists
+    #   id: check-image
+    #   run: |
+    #     # Check if the specific version tag already exists for both platforms
+    #     if docker manifest inspect ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.SWIFT_VERSION }} >/dev/null 2>&1; then
+    #       # Check if it's a multi-platform image
+    #       MANIFEST=$(docker manifest inspect ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.SWIFT_VERSION }})
+    #       if echo "$MANIFEST" | jq -e '.manifests | length > 1' >/dev/null 2>&1; then
+    #         echo "exists=true" >> $GITHUB_OUTPUT
+    #       else
+    #         echo "exists=false" >> $GITHUB_OUTPUT
+    #       fi
+    #     else
+    #       echo "exists=false" >> $GITHUB_OUTPUT
+    #     fi
 
     - name: Log in to the Container registry
       if: steps.check-image.outputs.exists != 'true'
