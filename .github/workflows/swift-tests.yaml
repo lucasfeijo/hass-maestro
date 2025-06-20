@@ -15,6 +15,24 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4.2.2
+      - name: Create GPG wrapper
+        run: |
+          mkdir -p "$HOME/bin"
+          cat <<'EOF' > "$HOME/bin/gpg"
+          #!/bin/bash
+          real_gpg=$(command -v gpg.real || command -v gpg)
+          if [[ "$1" == "--import" && -f "$2" ]]; then
+            if file "$2" | grep -q gzip; then
+              gunzip -c "$2" | "$real_gpg" --import -
+            else
+              "$real_gpg" "$@"
+            fi
+          else
+            "$real_gpg" "$@"
+          fi
+          EOF
+          chmod +x "$HOME/bin/gpg"
+          echo "$HOME/bin" >> "$GITHUB_PATH"
       - name: Import Swift signing keys
         # Swift publishes release signing keys as a gzip-compressed ASC file,
         # but some environments may transparently decompress the download. Try
