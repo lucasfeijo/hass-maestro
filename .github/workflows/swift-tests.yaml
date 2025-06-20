@@ -15,8 +15,11 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Import Swift signing keys
+        env:
+          GNUPGHOME: ${{ runner.temp }}/gnupg
         run: |
-          curl --silent --retry 3 --location --fail https://swift.org/keys/all-keys.asc \
+          mkdir -p "$GNUPGHOME"
+          curl -fsSL https://swift.org/keys/all-keys.asc \
             | gpg --batch --import -
 
       - name: Set up Swift
