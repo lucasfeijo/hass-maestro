@@ -41,14 +41,11 @@ swift run maestro
  --baseurl http://homeassistant.local:8123/ # base URL for the Home Assistant instance. The default is `http://homeassistant.local:8123/`
  --token YOUR_TOKEN # long lived Home Assistant token used for API calls
  --simulate # print light commands to stdout instead of sending them
---verbose # print commands while also sending them
---no-notify # disable Home Assistant persistent notifications on failures
---program secondary # choose the light program to run (`default` or `secondary`)
---port 8080 # port for the HTTP server (default 8080)
+ --verbose # print commands while also sending them
+ --no-notify # disable Home Assistant persistent notifications on failures
+ --program secondary # choose the light program to run (`default` or `secondary`)
+ --port 8080 # port for the HTTP server (default 8080)
 ```
-
-Light commands and errors are printed with ANSI colors when running in verbose
-or simulation mode to improve readability.
 
 The package builds on Linux and macOS. On macOS the POSIX server code uses the
 `Darwin` module, so the same command works there as well.
