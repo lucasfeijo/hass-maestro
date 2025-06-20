@@ -20,8 +20,9 @@ jobs:
         # Some environments transparently decompress downloads, so fall back to
         # using the original data if gunzip fails.
         run: |
+          set -o pipefail
           curl -sSL https://swift.org/keys/all-keys.asc |
-            (gzip -d 2>/dev/null || cat) |
+            (gunzip -c 2>/dev/null || cat) |
             gpg --import -
       - name: Set up Swift
         uses: swift-actions/setup-swift@v2
