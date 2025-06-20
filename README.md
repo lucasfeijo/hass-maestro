@@ -3,6 +3,24 @@
 Home assistant lights orchestrator
 </div>
 
+<p align="center">
+  <a href="https://github.com/lucasfeijo/hass-maestro/actions/workflows/builder.yaml">
+    <img alt="Builder" src="https://github.com/lucasfeijo/hass-maestro/actions/workflows/builder.yaml/badge.svg" />
+  </a>
+  <a href="https://github.com/lucasfeijo/hass-maestro/actions/workflows/lint.yaml">
+    <img alt="Lint" src="https://github.com/lucasfeijo/hass-maestro/actions/workflows/lint.yaml/badge.svg" />
+  </a>
+  <a href="https://github.com/lucasfeijo/hass-maestro/actions/workflows/swift-tests.yaml">
+    <img alt="Swift Tests" src="https://github.com/lucasfeijo/hass-maestro/actions/workflows/swift-tests.yaml/badge.svg" />
+  </a>
+  <a href="https://ghcr.io/lucasfeijo/aarch64-addon-maestro">
+    <img alt="aarch64" src="https://img.shields.io/badge/aarch64-1.0.51-blue?logo=docker" />
+  </a>
+  <a href="https://ghcr.io/lucasfeijo/amd64-addon-maestro">
+    <img alt="amd64" src="https://img.shields.io/badge/amd64-1.0.51-blue?logo=docker" />
+  </a>
+</p>
+
 ## Compiling on macOS
 
 ```sh
