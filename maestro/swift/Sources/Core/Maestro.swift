@@ -39,6 +39,9 @@ public final class Maestro {
         switch result {
         case .success(let states):
             let context = StateContext(states: states)
+            if verbose {
+                logger.log(context.description)
+            }
             let output = program.compute(context: context)
             let lightEffects = output.changeset.simplified.map { SideEffect.setLight($0) }
             let allEffects = output.sideEffects + lightEffects
