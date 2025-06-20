@@ -13,16 +13,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
-      – name: Import Swift signing key
+      - name: Download Swift signing key
         env:
           GNUPGHOME: ${{ runner.temp }}/gnupg
         run: |
           mkdir -p "$GNUPGHOME"
           curl -fsSL https://swift.org/keys/release-key-swift-5.x.asc \
             | gpg --batch --import -
-
-      – name: Set up Swift
+      - name: Setup Swift
         uses: swift-actions/setup-swift@v2
         env:
           GNUPGHOME: ${{ runner.temp }}/gnupg
