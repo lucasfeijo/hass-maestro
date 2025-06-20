@@ -18,7 +18,6 @@ jobs:
         run: |
           curl --silent --retry 3 --location --fail https://swift.org/keys/all-keys.asc \
             | gpg --batch --import -
-        # no need to set GNUPGHOME unless you’ve overridden it
 
       - name: Set up Swift
         uses: swift-actions/setup-swift@v2
