@@ -16,7 +16,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4.2.2
       - name: Import Swift signing keys
-        run: curl -sSL https://swift.org/keys/all-keys.asc | gpg --import -
+        # The Swift signing keys file is served gzip compressed. Decompress
+        # before piping to GPG so the key data is recognized.
+        run: curl -sSL https://swift.org/keys/all-keys.asc | gunzip | gpg --import -
       - name: Set up Swift
         uses: swift-actions/setup-swift@v2
         with:
