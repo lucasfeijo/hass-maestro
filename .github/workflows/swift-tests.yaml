@@ -1,30 +1,41 @@
-name: Swift Tests
+name: Build Swift
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Download Swift signing key
+
+      - name: Prepare GPG home
         env:
           GNUPGHOME: ${{ runner.temp }}/gnupg
         run: |
           mkdir -p "$GNUPGHOME"
+          chmod 700 "$GNUPGHOME"
+
+      - name: Import Swift public keys
+        env:
+          GNUPGHOME: ${{ runner.temp }}/gnupg
+        run: |
+          # Infrastructure signing key
+          curl -fsSL https://swift.org/keys/automatic-signing-key-4.asc \
+            | gpg --batch --import -
+          # Swift 5.x release key
           curl -fsSL https://swift.org/keys/release-key-swift-5.x.asc \
             | gpg --batch --import -
-      - name: Setup Swift
+
+      - name: Set up Swift
         uses: swift-actions/setup-swift@v2
         env:
           GNUPGHOME: ${{ runner.temp }}/gnupg
         with:
           swift-version: "5.9"
+
       - name: Run tests
         run: swift test --package-path maestro/swift
