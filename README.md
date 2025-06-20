@@ -82,3 +82,9 @@ The maestro pipeline consists of 5 steps:
 5. **LIGHTS**: Applies the final computed states to the physical lights through the Home Assistant API (or simulates the changes if in simulation mode).
 
 This pipeline runs each time the `/run` endpoint is called, ensuring the lights always match the desired state based on current conditions.
+
+## Example: WLED Segment Automation
+
+See `Examples/wled_segment_automation.yaml` for a Home Assistant automation that
+keeps the WLED "Main" segment at full brightness whenever any of the TV shelf
+segments are switched on.
