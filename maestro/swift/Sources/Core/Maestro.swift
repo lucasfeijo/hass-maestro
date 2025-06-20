@@ -32,7 +32,7 @@ public final class Maestro {
     /// If any step fails, the error is logged and the process stops.
     public func run() {
         if verbose {
-            logger.log("Running program \(program.name)")
+            logger.log("▶️ Running program \(program.name)")
         }
 
         let result = states.fetchAllStates()
