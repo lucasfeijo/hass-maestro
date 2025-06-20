@@ -1,4 +1,4 @@
-name: Swift Tests
+name: Tests
 
 on:
   push:
@@ -9,15 +9,13 @@ on:
       - main
 
 jobs:
-  test:
-    name: Run Swift tests
-    runs-on: ubuntu-22.04
+  build:
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4.2.2
-      - name: Set up Swift
-        uses: swift-actions/setup-swift@v2
-        with:
-          swift-version: "5.9"
+      - uses: actions/checkout@v4
+
+      - name: Download & extract Swift 5.9
+        run: swift sdk install https://download.swift.org/swift-6.1.2-release/static-sdk/swift-6.1.2-RELEASE/swift-6.1.2-RELEASE_static-linux-0.0.1.artifactbundle.tar.gz --checksum df0b40b9b582598e7e3d70c82ab503fd6fbfdff71fd17e7f1ab37115a0665b3b
+
       - name: Run tests
         run: swift test --package-path maestro/swift
