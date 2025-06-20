@@ -9,6 +9,10 @@ extension StateContext {
 
     public struct Environment {
         public var timeOfDay: TimeOfDay
+        /// Progress of the sunset transition, between 0 and 1 when `timeOfDay`
+        /// is `.sunset`. Zero represents the start of the fade and one means
+        /// sunset has been reached.
+        public var sunsetProgress: Double
         public var hyperionRunning: Bool
         public var diningPresence: Bool
         public var kitchenPresence: Bool
@@ -18,6 +22,7 @@ extension StateContext {
         public var tvShelvesEnabled: [Bool]
 
         public init(timeOfDay: TimeOfDay,
+                    sunsetProgress: Double = 0,
                     hyperionRunning: Bool,
                     diningPresence: Bool,
                     kitchenPresence: Bool,
@@ -25,6 +30,7 @@ extension StateContext {
                     autoMode: Bool,
                     tvShelvesEnabled: [Bool]) {
             self.timeOfDay = timeOfDay
+            self.sunsetProgress = sunsetProgress
             self.hyperionRunning = hyperionRunning
             self.diningPresence = diningPresence
             self.kitchenPresence = kitchenPresence
