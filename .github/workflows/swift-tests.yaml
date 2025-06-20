@@ -21,6 +21,7 @@ jobs:
           DISTRO=ubuntu2204
           TARBALL=swift-${SWIFT_VERSION}-RELEASE-ubuntu22.04.tar.gz
           URL="https://download.swift.org/${RELEASE_DIR}/${DISTRO}/${TARBALL}"
+          echo "$URL"
           curl -fsSL "$URL" -o swift.tar.gz
           tar xzf swift.tar.gz
           echo "${PWD}/swift-${SWIFT_VERSION}-RELEASE-ubuntu22.04/usr/bin" >> $GITHUB_PATH
