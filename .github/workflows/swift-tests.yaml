@@ -17,12 +17,13 @@ jobs:
       - name: Download & extract Swift 5.9
         run: |
           SWIFT_VERSION=5.9
-          OS=ubuntu22.04
-          TOOLCHAIN_DIR=swift-${SWIFT_VERSION}-RELEASE-${OS}
-          URL="https://download.swift.org/swift-${SWIFT_VERSION}-release/${OS}/swift-${SWIFT_VERSION}-RELEASE/swift-${SWIFT_VERSION}-RELEASE-${OS}.tar.gz"
+          RELEASE_DIR=swift-${SWIFT_VERSION}-release
+          DISTRO=ubuntu2204
+          TARBALL=swift-${SWIFT_VERSION}-RELEASE-ubuntu22.04.tar.gz
+          URL="https://download.swift.org/${RELEASE_DIR}/${DISTRO}/${TARBALL}"
           curl -fsSL "$URL" -o swift.tar.gz
           tar xzf swift.tar.gz
-          echo "${PWD}/${TOOLCHAIN_DIR}/usr/bin" >> $GITHUB_PATH
+          echo "${PWD}/swift-${SWIFT_VERSION}-RELEASE-ubuntu22.04/usr/bin" >> $GITHUB_PATH
 
       - name: Run tests
         run: swift test --package-path maestro/swift
