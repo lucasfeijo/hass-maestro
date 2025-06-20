@@ -32,9 +32,15 @@ jobs:
     - name: Check if image already exists
       id: check-image
       run: |
-        # Check if the specific version tag already exists
+        # Check if the specific version tag already exists for both platforms
         if docker manifest inspect ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.SWIFT_VERSION }} >/dev/null 2>&1; then
-          echo "exists=true" >> $GITHUB_OUTPUT
+          # Check if it's a multi-platform image
+          MANIFEST=$(docker manifest inspect ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.SWIFT_VERSION }})
+          if echo "$MANIFEST" | jq -e '.manifests | length > 1' >/dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
         else
           echo "exists=false" >> $GITHUB_OUTPUT
         fi
@@ -64,6 +70,7 @@ jobs:
         context: ./maestro
         file: ./maestro/Dockerfile.base
         push: true
+        platforms: linux/amd64,linux/aarch64
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
         cache-from: type=gha
@@ -72,4 +79,4 @@ jobs:
     - name: Skip build - image already exists
       if: steps.check-image.outputs.exists == 'true'
       run: |
-        echo "Image ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.SWIFT_VERSION }} already exists, skipping build" 
+        echo "Multi-platform image ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.SWIFT_VERSION }} already exists, skipping build" 
