@@ -30,7 +30,7 @@ public struct LightStateChangeset {
                     } else {
                         pct = Int(round(Double(curr) * 100.0 / 255.0))
                     }
-                    if abs(pct - desired) > 1 { shouldSend = true }
+                    if pct != desired { shouldSend = true }
                 } else if change.brightness != nil {
                     shouldSend = true
                 } else if let desiredCT = change.colorTemperature,
