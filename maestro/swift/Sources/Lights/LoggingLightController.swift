@@ -3,10 +3,14 @@ import Foundation
 /// `LightController` implementation that prints light commands instead of
 /// sending them to Home Assistant. Useful for debugging.
 public final class LoggingLightController: LightController {
-    public init() {}
+    private let logger: Logger
+
+    public init(logger: Logger = Logger(pusher: nil)) {
+        self.logger = logger
+    }
 
     public func setLightState(state: LightState) {
-        var message = "[LOG] \(state.entityId) -> \(state.on ? "on" : "off")"
+        var message = "\(state.entityId) -> \(state.on ? "on" : "off")"
         if let b = state.brightness { message += " brightness:\(b)" }
         if let ct = state.colorTemperature { message += " colorTemp:\(ct)" }
         if let rgb = state.rgbColor {
@@ -17,14 +21,14 @@ public final class LoggingLightController: LightController {
         }
         if let effect = state.effect { message += " effect:\(effect)" }
         if let t = state.transitionDuration { message += " transition:\(t)" }
-        print(message)
+        logger.log(message)
     }
 
     public func stopAllDynamicScenes() {
-        print("[LOG] scene_presets.stop_all_dynamic_scenes")
+        logger.log("scene_presets.stop_all_dynamic_scenes")
     }
 
     public func setInputBoolean(entityId: String, to state: Bool) {
-        print("[LOG] \(entityId) -> \(state ? "on" : "off")")
+        logger.log("\(entityId) -> \(state ? "on" : "off")")
     }
 }

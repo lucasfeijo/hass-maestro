@@ -10,13 +10,13 @@ func makeMaestro(from options: MaestroOptions) -> Maestro {
 
     let lights: LightController
     if options.simulate {
-        lights = LoggingLightController()
+        lights = LoggingLightController(logger: logger)
     } else {
         let haLights = HomeAssistantLightController(baseURL: options.baseURL,
                                                    token: options.token,
                                                    logger: logger)
         lights = options.verbose ?
-            MultiLightController([haLights, LoggingLightController()]) :
+            MultiLightController([haLights, LoggingLightController(logger: logger)]) :
             haLights
     }
 
