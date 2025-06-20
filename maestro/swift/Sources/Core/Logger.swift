@@ -1,5 +1,12 @@
+import Foundation
+
 public struct Logger: @unchecked Sendable {
     let pusher: NotificationPusher?
+    private static let formatter: ISO8601DateFormatter = {
+        let f = ISO8601DateFormatter()
+        f.formatOptions = [.withInternetDateTime]
+        return f
+    }()
 
     enum Color {
         static let red = "\u{001B}[31m"
@@ -16,11 +23,13 @@ public struct Logger: @unchecked Sendable {
     }
 
     public func log(_ message: String) {
-        print(colored("[LOG] \(message)", color: Color.cyan))
+        let ts = Logger.formatter.string(from: Date())
+        print(colored("[\(ts)] [LOG] \(message)", color: Color.cyan))
     }
 
     public func error(_ message: String) {
-        print(colored("[ERROR] \(message)", color: Color.red))
+        let ts = Logger.formatter.string(from: Date())
+        print(colored("[\(ts)] [ERROR] \(message)", color: Color.red))
         pusher?.push(title: "Maestro Error", message: message)
     }
 }
