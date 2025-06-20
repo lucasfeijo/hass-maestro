@@ -1,9 +1,9 @@
 # syntax=docker/dockerfile:1.3
 ARG BUILD_FROM
-FROM swift:6.1.2 AS build
+# Use pre-built base image with Swift SDK already installed
+FROM ghcr.io/lucasfeijo/swift-sdk-base:6.1.2 AS build
 
-# Install Static Linux SDK
-RUN swift sdk install https://download.swift.org/swift-6.1.2-release/static-sdk/swift-6.1.2-RELEASE/swift-6.1.2-RELEASE_static-linux-0.0.1.artifactbundle.tar.gz --checksum df0b40b9b582598e7e3d70c82ab503fd6fbfdff71fd17e7f1ab37115a0665b3b
+# SDK is already installed in the base image, no need to download again
 
 WORKDIR /usr/src/app
 COPY swift/ ./
