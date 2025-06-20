@@ -28,38 +28,15 @@ public struct LightProgramDefault: LightProgram {
             return LightStateChangeset(currentStates: states, desiredStates: [])
         }
 
-        let desired: [LightState]
-        if scene == .normal && environment.timeOfDay == .sunset {
-            var preEnv = environment
-            preEnv.timeOfDay = .preSunset
-            preEnv.sunsetProgress = 0
-            let preStates = computeChanges(scene: scene, environment: preEnv, states: states, transition: transition)
-
-            var sunsetEnv = environment
-            sunsetEnv.sunsetProgress = 1
-            let sunsetStates = computeChanges(scene: scene, environment: sunsetEnv, states: states, transition: transition)
-
-            desired = blendStates(from: preStates, to: sunsetStates, progress: environment.sunsetProgress, transition: transition)
-        } else {
-            desired = computeChanges(scene: scene, environment: environment, states: states, transition: transition)
-        }
-
-        return LightStateChangeset(currentStates: states,
-                                   desiredStates: desired)
-    }
-
-    private func computeChanges(scene: StateContext.Scene,
-                                environment: StateContext.Environment,
-                                states: HomeAssistantStateMap,
-                                transition: Double) -> [LightState] {
-        var changes = baseSceneChanges(scene: scene, environment: environment)
+        var changes = sceneChanges(scene: scene, environment: environment)
         applyKitchenSink(scene: scene, environment: environment, changes: &changes)
         let expanded = expandTvShelfGroup(changes: changes, environment: environment, transition: transition)
         let scaled = scaleBrightness(changes: expanded, states: states, transition: transition)
-        return ensureWledMain(changes: scaled, transition: transition)
+        let finalStates = ensureWledMain(changes: scaled, transition: transition)
+        return LightStateChangeset(currentStates: states, desiredStates: finalStates)
     }
 
-    private func baseSceneChanges(scene: StateContext.Scene, environment: StateContext.Environment) -> [LightState] {
+    private func sceneChanges(scene: StateContext.Scene, environment: StateContext.Environment) -> [LightState] {
         var changes: [LightState] = []
 
         switch scene {
@@ -256,51 +233,5 @@ public struct LightProgramDefault: LightProgram {
                                       transitionDuration: transition))
         }
         return filtered
-    }
-
-    private func blendStates(from pre: [LightState],
-                             to sunset: [LightState],
-                             progress: Double,
-                             transition: Double) -> [LightState] {
-        let preMap = Dictionary(uniqueKeysWithValues: pre.map { ($0.entityId, $0) })
-        let sunMap = Dictionary(uniqueKeysWithValues: sunset.map { ($0.entityId, $0) })
-        var blended: [LightState] = []
-        for id in Set(preMap.keys).union(sunMap.keys) {
-            let a = preMap[id]
-            let b = sunMap[id]
-            let brightnessA = a?.brightness ?? (a?.on == true ? 0 : nil)
-            let brightnessB = b?.brightness ?? (b?.on == true ? 0 : nil)
-
-            var brightness: Int?
-            if let ba = brightnessA, let bb = brightnessB {
-                brightness = Int(round((1 - progress) * Double(ba) + progress * Double(bb)))
-            } else if let bb = brightnessB {
-                brightness = Int(round(progress * Double(bb)))
-            } else if let ba = brightnessA {
-                brightness = Int(round((1 - progress) * Double(ba)))
-            }
-
-            let ct: Int?
-            if let cta = a?.colorTemperature, let ctb = b?.colorTemperature {
-                ct = Int(round((1 - progress) * Double(cta) + progress * Double(ctb)))
-            } else {
-                ct = a?.colorTemperature ?? b?.colorTemperature
-            }
-
-            let rgbColor = progress < 0.5 ? a?.rgbColor : b?.rgbColor
-            let rgbwColor = progress < 0.5 ? a?.rgbwColor : b?.rgbwColor
-            let effect = progress < 0.5 ? a?.effect : b?.effect
-            let isOn = (brightness ?? 0) > 0 || (a?.on ?? false && progress < 1) || (b?.on ?? false && progress > 0)
-
-            blended.append(LightState(entityId: id,
-                                     on: isOn,
-                                     brightness: brightness,
-                                     colorTemperature: ct,
-                                     rgbColor: rgbColor,
-                                     rgbwColor: rgbwColor,
-                                     effect: effect,
-                                     transitionDuration: transition))
-        }
-        return blended
     }
 }

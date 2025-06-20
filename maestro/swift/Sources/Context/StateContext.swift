@@ -30,7 +30,6 @@ public struct StateContext {
 
         let sunState = states["sun.sun"]?["state"] as? String ?? "below_horizon"
         var timeOfDay: TimeOfDay = .nighttime
-        var sunsetProgress: Double = 0
         if sunState == "above_horizon" {
             if let attrs = states["sun.sun"]?["attributes"] as? [String: Any],
                let nextSettingStr = attrs["next_setting"] as? String {
@@ -43,8 +42,6 @@ public struct StateContext {
                     let eighteenHoursBefore = nextSetting.addingTimeInterval(-64800)
                     if now > oneHourBefore {
                         timeOfDay = .sunset
-                        let elapsed = now.timeIntervalSince(oneHourBefore)
-                        sunsetProgress = max(0, min(1, elapsed / 3600))
                     } else if now > twoHoursBefore {
                         timeOfDay = .preSunset
                     } else if now < eighteenHoursBefore {
@@ -73,7 +70,6 @@ public struct StateContext {
             tvShelves.append(enabled)
         }
         let env = Environment(timeOfDay: timeOfDay,
-                            sunsetProgress: sunsetProgress,
                             hyperionRunning: hyperionRunning,
                             diningPresence: diningPresence,
                             kitchenPresence: kitchenPresence,
