@@ -17,13 +17,12 @@ jobs:
         uses: actions/checkout@v4.2.2
       - name: Import Swift signing keys
         # Swift publishes release signing keys as a gzip-compressed ASC file.
-        # Some environments transparently decompress downloads, so fall back to
-        # using the original data if gunzip fails.
+        # Ensure the download is decompressed before importing to GPG.
         run: |
           set -o pipefail
-          curl -sSL https://swift.org/keys/all-keys.asc |
-            (gunzip -c 2>/dev/null || cat) |
-            gpg --import -
+          curl -fsSL https://swift.org/keys/all-keys.asc \
+            | gunzip -c \
+            | gpg --import -
       - name: Set up Swift
         uses: swift-actions/setup-swift@v2
         with:
