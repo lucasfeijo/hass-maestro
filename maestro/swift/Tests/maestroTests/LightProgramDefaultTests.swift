@@ -185,4 +185,20 @@ final class LightProgramDefaultTests: XCTestCase {
         XCTAssertEqual(tvLight?.colorTemperature, 309)
         XCTAssertEqual(tvLight?.transitionDuration, 2)
     }
+
+    func testMainSegmentOnWhenShelfOn() {
+        let context = StateContext(states: [
+            "input_select.living_scene": ["state": "bright"],
+            "binary_sensor.living_tv_hyperion_running_condition_for_the_scene": ["state": "off"],
+            "binary_sensor.dining_espresence": ["state": "off"],
+            "binary_sensor.kitchen_espresence": ["state": "off"],
+            "binary_sensor.kitchen_presence_occupancy": ["state": "off"],
+            "input_boolean.kitchen_extra_brightness": ["state": "off"]
+        ])
+
+        let diff = LightProgramDefault().computeStateSet(context: context)
+        let main = diff.desiredStates.first { $0.entityId == "light.wled_tv_shelf_main" }
+        XCTAssertEqual(main?.brightness, 100)
+        XCTAssertTrue(main?.on ?? false)
+    }
 }
