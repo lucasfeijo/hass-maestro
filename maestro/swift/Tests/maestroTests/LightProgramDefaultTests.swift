@@ -90,10 +90,11 @@ final class LightProgramDefaultTests: XCTestCase {
                                           "binary_sensor.living_tv_hyperion_running_condition_for_the_scene": ["state": "off"],
                                           "binary_sensor.dining_espresence": ["state": "off"],
                                           "binary_sensor.kitchen_espresence": ["state": "off"],
-                                          "input_boolean.kitchen_extra_brightness": ["state": "off"]])
+                                          "input_boolean.kitchen_extra_brightness": ["state": "off"],
+                                          "input_number.scene_light_transition": ["state": "3"]])
         let diff = LightProgramDefault().compute(context: context).changeset
         for state in diff.desiredStates {
-            XCTAssertEqual(state.transitionDuration, 2, "Expected transition of 2 seconds")
+            XCTAssertEqual(state.transitionDuration, 3, "Expected transition of 3 seconds")
         }
     }
 

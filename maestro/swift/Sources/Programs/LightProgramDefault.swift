@@ -22,7 +22,7 @@ public struct LightProgramDefault: LightProgram {
 
     public func compute(context: StateContext) -> ProgramOutput {
         let states = context.states
-        let transition = 2.0
+        let transition = context.environment.lightTransition
 
         var changes: [LightState] = []
         var effects: [SideEffect] = []

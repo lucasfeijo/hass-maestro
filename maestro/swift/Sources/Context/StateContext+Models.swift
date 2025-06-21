@@ -14,6 +14,8 @@ extension StateContext {
         public var kitchenPresence: Bool
         public var kitchenExtraBrightness: Bool
         public var autoMode: Bool
+        /// Transition duration in seconds for light changes
+        public var lightTransition: Double
         /// Individual shelf enable switches. Index 0 corresponds to shelf 1.
         public var tvShelvesEnabled: [Bool]
 
@@ -23,7 +25,8 @@ extension StateContext {
                     kitchenPresence: Bool,
                     kitchenExtraBrightness: Bool,
                     autoMode: Bool,
-                    tvShelvesEnabled: [Bool]) {
+                    tvShelvesEnabled: [Bool],
+                    lightTransition: Double) {
             self.timeOfDay = timeOfDay
             self.hyperionRunning = hyperionRunning
             self.diningPresence = diningPresence
@@ -31,6 +34,7 @@ extension StateContext {
             self.kitchenExtraBrightness = kitchenExtraBrightness
             self.autoMode = autoMode
             self.tvShelvesEnabled = tvShelvesEnabled
+            self.lightTransition = lightTransition
         }
     }
 }

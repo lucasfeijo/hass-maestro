@@ -63,6 +63,8 @@ public struct StateContext {
         let kitchenPresence = kitchenPresenceEspresence || kitchenPresenceOccupancy
         let kitchenExtraBrightness = states["input_boolean.kitchen_extra_brightness"]?["state"] as? String == "on"
         let autoMode = states["input_boolean.living_scene_auto"]?["state"] as? String != "off"
+        let transitionStr = states["input_number.scene_light_transition"]?["state"] as? String ?? "2"
+        let lightTransition = Double(transitionStr) ?? 2.0
         var tvShelves: [Bool] = []
         for i in 1...5 {
             let key = "input_boolean.wled_tv_shelf_\(i)"
@@ -75,7 +77,8 @@ public struct StateContext {
                             kitchenPresence: kitchenPresence,
                             kitchenExtraBrightness: kitchenExtraBrightness,
                             autoMode: autoMode,
-                            tvShelvesEnabled: tvShelves)
+                            tvShelvesEnabled: tvShelves,
+                            lightTransition: lightTransition)
 
         self.scene = scene
         self.environment = env
