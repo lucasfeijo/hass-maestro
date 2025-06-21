@@ -111,6 +111,8 @@ Feature 4 of the roadmap calls for more refined time-of-day logic within the Swi
 
 These actions are all side effects of deciding what the lights should do. Because they're executed directly, any new behaviour would further crowd `Maestro.run()` with additional service calls. A more maintainable approach is to collect all side effects during the PROGRAM step (lights, helper booleans, scene preset commands, logs, etc.) and execute them in the final LIGHTS step. This keeps decision making separate from performing the actions and declutters the core loop.
 
+See [docs/side-effects.md](side-effects.md) for details on the chosen approach.
+
 ## Implementation Strategy
 
 1. Start with Quick Wins to build momentum and improve usability
