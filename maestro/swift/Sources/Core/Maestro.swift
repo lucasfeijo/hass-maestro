@@ -2,18 +2,18 @@ import Foundation
 
 public final class Maestro {
     private let states: StateProvider
-    private let lights: EffectController
+    private let effects: EffectController
     private let program: LightProgram
     private let logger: Logger
     private let verbose: Bool
 
     public init(states: StateProvider,
-                lights: EffectController,
+                effects: EffectController,
                 program: LightProgram,
                 logger: Logger,
                 verbose: Bool = false) {
         self.states = states
-        self.lights = lights
+        self.effects = effects
         self.program = program
         self.logger = logger
         self.verbose = verbose
@@ -45,7 +45,7 @@ public final class Maestro {
             let output = program.compute(context: context)
             let lightEffects = output.changeset.simplified.map { SideEffect.setLight($0) }
             let allEffects = output.sideEffects + lightEffects
-            allEffects.forEach { $0.perform(using: lights) }
+            allEffects.forEach { $0.perform(using: effects) }
         case .failure(let error):
             logger.error("Failed to fetch home assistant states: \(error)")
         }
