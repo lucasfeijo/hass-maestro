@@ -51,26 +51,4 @@ public struct LightProgramDefault: LightProgram {
         let changeset = LightStateChangeset(currentStates: states, desiredStates: changes)
         return ProgramOutput(changeset: changeset, sideEffects: effects)
     }
-
-    // Original method preserved for direct tests
-    public func computeStateSet(context: StateContext) -> LightStateChangeset {
-        let states = context.states
-        let transition = 2.0
-
-        guard context.environment.autoMode else {
-            return LightStateChangeset(currentStates: states, desiredStates: [])
-        }
-
-        var changes: [LightState] = []
-        var effects: [SideEffect] = []
-        for step in steps {
-            let result = step.apply(changes: changes,
-                                    effects: effects,
-                                    context: context,
-                                    transition: transition)
-            changes = result.0
-            effects = result.1
-        }
-        return LightStateChangeset(currentStates: states, desiredStates: changes)
-    }
 }
