@@ -30,8 +30,6 @@ final class MaestroDynamicScenesTests: XCTestCase {
             }
             return ProgramOutput(changeset: LightStateChangeset(currentStates: context.states, desiredStates: []), sideEffects: effects)
         }
-        // maintain old method for convenience
-        func computeStateSet(context: StateContext) -> LightStateChangeset { .init(currentStates: context.states, desiredStates: []) }
     }
 
     func testStopsDynamicScenesWhenNotPreset() {

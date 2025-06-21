@@ -4,7 +4,7 @@ import XCTest
 final class LightProgramDefaultTests: XCTestCase {
     func testOffSceneTurnsAllLightsOff() {
         let context = StateContext(states: ["input_select.living_scene": ["state": "off"]])
-        let diff = LightProgramDefault().computeStateSet(context: context)
+        let diff = LightProgramDefault().compute(context: context).changeset
         
         // Verify all lights are turned off
         for lightState in diff.desiredStates {
@@ -21,7 +21,7 @@ final class LightProgramDefaultTests: XCTestCase {
             "binary_sensor.kitchen_espresence": ["state": "off"],
             "input_boolean.kitchen_extra_brightness": ["state": "off"]
         ])
-        let diff = LightProgramDefault().computeStateSet(context: context)
+        let diff = LightProgramDefault().compute(context: context).changeset
         
         let tvLight = diff.desiredStates.first { $0.entityId == "light.tv_light" }
         XCTAssertFalse(tvLight?.on ?? true)
@@ -42,7 +42,7 @@ final class LightProgramDefaultTests: XCTestCase {
             "binary_sensor.kitchen_espresence": ["state": "off"],
             "input_boolean.kitchen_extra_brightness": ["state": "off"]
         ])
-        let diff = LightProgramDefault().computeStateSet(context: context)
+        let diff = LightProgramDefault().compute(context: context).changeset
         
         let tvLight = diff.desiredStates.first { $0.entityId == "light.tv_light" }
         XCTAssertFalse(tvLight?.on ?? true)
@@ -66,8 +66,8 @@ final class LightProgramDefaultTests: XCTestCase {
             "input_boolean.kitchen_extra_brightness": ["state": "off"]
         ])
         
-        let diffWithPresence = LightProgramDefault().computeStateSet(context: contextWithPresence)
-        let diffWithoutPresence = LightProgramDefault().computeStateSet(context: contextWithoutPresence)
+        let diffWithPresence = LightProgramDefault().compute(context: contextWithPresence).changeset
+        let diffWithoutPresence = LightProgramDefault().compute(context: contextWithoutPresence).changeset
         
         // dining table brighter when presence detected
         let diningWithPresence = diffWithPresence.desiredStates.first { $0.entityId == "light.dining_table_light" }
@@ -80,7 +80,7 @@ final class LightProgramDefaultTests: XCTestCase {
             "input_select.living_scene": ["state": "normal"],
             "input_boolean.living_scene_auto": ["state": "off"]
         ])
-        let diff = LightProgramDefault().computeStateSet(context: context)
+        let diff = LightProgramDefault().compute(context: context).changeset
         XCTAssertTrue(diff.desiredStates.isEmpty)
     }
 
@@ -91,7 +91,7 @@ final class LightProgramDefaultTests: XCTestCase {
                                           "binary_sensor.dining_espresence": ["state": "off"],
                                           "binary_sensor.kitchen_espresence": ["state": "off"],
                                           "input_boolean.kitchen_extra_brightness": ["state": "off"]])
-        let diff = LightProgramDefault().computeStateSet(context: context)
+        let diff = LightProgramDefault().compute(context: context).changeset
         for state in diff.desiredStates {
             XCTAssertEqual(state.transitionDuration, 2, "Expected transition of 2 seconds")
         }
@@ -111,7 +111,7 @@ final class LightProgramDefaultTests: XCTestCase {
             "input_boolean.wled_tv_shelf_4": ["state": "on"],
             "input_boolean.wled_tv_shelf_5": ["state": "on"]
         ])
-        let diff = LightProgramDefault().computeStateSet(context: context)
+        let diff = LightProgramDefault().compute(context: context).changeset
 
         let shelf2 = diff.desiredStates.first { $0.entityId == "light.wled_tv_shelf_2" }
         XCTAssertFalse(shelf2?.on ?? true)
@@ -130,7 +130,7 @@ final class LightProgramDefaultTests: XCTestCase {
             "binary_sensor.kitchen_presence_occupancy": ["state": "on"],
             "input_boolean.kitchen_extra_brightness": ["state": "off"]
         ])
-        let diff = LightProgramDefault().computeStateSet(context: context)
+        let diff = LightProgramDefault().compute(context: context).changeset
         let sink = diff.desiredStates.first { $0.entityId == "light.kitchen_sink_light" }
         XCTAssertEqual(sink?.brightness, 60)
         XCTAssertEqual(sink?.rgbwColor?.3, 255)
@@ -145,7 +145,7 @@ final class LightProgramDefaultTests: XCTestCase {
             "binary_sensor.kitchen_espresence": ["state": "on"],
             "input_boolean.kitchen_extra_brightness": ["state": "off"]
         ])
-        let diff = LightProgramDefault().computeStateSet(context: context)
+        let diff = LightProgramDefault().compute(context: context).changeset
         let sink = diff.desiredStates.first { $0.entityId == "light.kitchen_sink_light" }
         XCTAssertEqual(sink?.rgbwColor?.0, 230)
         XCTAssertEqual(sink?.rgbwColor?.1, 170)
@@ -162,7 +162,7 @@ final class LightProgramDefaultTests: XCTestCase {
             "binary_sensor.kitchen_espresence": ["state": "off"],
             "input_boolean.kitchen_extra_brightness": ["state": "on"]
         ])
-        let diff = LightProgramDefault().computeStateSet(context: context)
+        let diff = LightProgramDefault().compute(context: context).changeset
         let sink = diff.desiredStates.first { $0.entityId == "light.kitchen_sink_light" }
         XCTAssertEqual(sink?.brightness, 10)
     }
@@ -177,7 +177,7 @@ final class LightProgramDefaultTests: XCTestCase {
             "input_boolean.kitchen_extra_brightness": ["state": "off"]
         ])
 
-        let diff = LightProgramDefault().computeStateSet(context: context)
+        let diff = LightProgramDefault().compute(context: context).changeset
         let main = diff.desiredStates.first { $0.entityId == "light.wled_tv_shelf_main" }
         XCTAssertEqual(main?.brightness, 100)
         XCTAssertTrue(main?.on ?? false)
