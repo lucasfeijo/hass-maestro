@@ -8,16 +8,16 @@ func makeMaestro(from options: MaestroOptions) -> Maestro {
 
     let states = HomeAssistantStateProvider(baseURL: options.baseURL, token: options.token)
 
-    let lights: EffectController
+    let effects: EffectController
     if options.simulate {
-        lights = LoggingEffectController(logger: logger)
+        effects = LoggingEffectController(logger: logger)
     } else {
-        let haLights = HomeAssistantEffectController(baseURL: options.baseURL,
-                                                   token: options.token,
-                                                   logger: logger)
-        lights = options.verbose ?
-            MultiEffectController([haLights, LoggingEffectController(logger: logger)]) :
-            haLights
+        let haEffects = HomeAssistantEffectController(baseURL: options.baseURL,
+                                                     token: options.token,
+                                                     logger: logger)
+        effects = options.verbose ?
+            MultiEffectController([haEffects, LoggingEffectController(logger: logger)]) :
+            haEffects
     }
 
     let stepStrings = options.programName
@@ -27,7 +27,7 @@ func makeMaestro(from options: MaestroOptions) -> Maestro {
     let program = LightProgramDefault(steps: steps.isEmpty ? LightProgramDefault.defaultSteps : steps)
 
     return Maestro(states: states,
-                   effects: lights,
+                   effects: effects,
                    program: program,
                    logger: logger,
                    verbose: options.verbose)

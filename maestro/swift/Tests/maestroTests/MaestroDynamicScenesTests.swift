@@ -37,10 +37,10 @@ final class MaestroDynamicScenesTests: XCTestCase {
             "input_select.living_scene": ["state": "normal"],
             "input_boolean.living_scene_auto": ["state": "on"]
         ])
-        let lights = DummyEffectController()
-        let maestro = Maestro(states: provider, lights: lights, program: StubProgram(), logger: Logger(pusher: nil))
+        let effects = DummyEffectController()
+        let maestro = Maestro(states: provider, effects: effects, program: StubProgram(), logger: Logger(pusher: nil))
         maestro.run()
-        XCTAssertEqual(lights.stopCount, 1)
+        XCTAssertEqual(effects.stopCount, 1)
     }
 
     func testDoesNotStopDynamicScenesForPreset() {
@@ -48,10 +48,10 @@ final class MaestroDynamicScenesTests: XCTestCase {
             "input_select.living_scene": ["state": "preset"],
             "input_boolean.living_scene_auto": ["state": "on"]
         ])
-        let lights = DummyEffectController()
-        let maestro = Maestro(states: provider, lights: lights, program: StubProgram(), logger: Logger(pusher: nil))
+        let effects = DummyEffectController()
+        let maestro = Maestro(states: provider, effects: effects, program: StubProgram(), logger: Logger(pusher: nil))
         maestro.run()
-        XCTAssertEqual(lights.stopCount, 0)
+        XCTAssertEqual(effects.stopCount, 0)
     }
 
     func testTurnsOffKitchenExtraBrightnessWhenNoPresence() {
@@ -60,10 +60,10 @@ final class MaestroDynamicScenesTests: XCTestCase {
             "binary_sensor.kitchen_espresence": ["state": "off"],
             "input_boolean.kitchen_extra_brightness": ["state": "on"]
         ])
-        let lights = DummyEffectController()
-        let maestro = Maestro(states: provider, lights: lights, program: StubProgram(), logger: Logger(pusher: nil))
+        let effects = DummyEffectController()
+        let maestro = Maestro(states: provider, effects: effects, program: StubProgram(), logger: Logger(pusher: nil))
         maestro.run()
-        XCTAssertEqual(lights.boolChanges.first?.0, "input_boolean.kitchen_extra_brightness")
-        XCTAssertEqual(lights.boolChanges.first?.1, false)
+        XCTAssertEqual(effects.boolChanges.first?.0, "input_boolean.kitchen_extra_brightness")
+        XCTAssertEqual(effects.boolChanges.first?.1, false)
     }
 }
