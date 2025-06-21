@@ -3,7 +3,7 @@ import Foundation
 import FoundationNetworking
 #endif
 
-public final class HomeAssistantLightController: LightController {
+public final class HomeAssistantEffectController: EffectController {
     private let baseURL: URL
     private let token: String?
     private let session: URLSession

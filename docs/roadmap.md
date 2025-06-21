@@ -23,7 +23,7 @@ The original Home Assistant Python automation includes a variety of capabilities
 
 ### 3. Transition Support *(implemented)*
 - Add transition duration field to `LightState`
-- Update `LightController` implementations to handle transitions
+- Update `EffectController` implementations to handle transitions
 - Implement 2-second fade support for relevant actions
 
 ### 4. Advanced Time-of-Day Handling *(implemented)*
@@ -72,12 +72,12 @@ Feature 4 of the roadmap calls for more refined time-of-day logic within the Swi
   - `rgb_color`
   - `rgbw_color`
 - Update `LightStateChangeset` to compare color values
-- Modify light controller implementations accordingly
+- Modify effect controller implementations accordingly
 
 ### 6.2. Effects (implemented)
 - Extend `LightState` to support `effect` values
 - Update `LightStateChangeset` to compare effect values
-- Modify light controller implementations accordingly
+- Modify effect controller implementations accordingly
 - In the original Python automation, WLED strips were always sent
   `effect: "solid"` whenever turned on. Without this, the lights might resume
   whatever dynamic effect was previously active. The comparison should ignore
