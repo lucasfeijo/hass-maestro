@@ -27,7 +27,7 @@ func makeMaestro(from options: MaestroOptions) -> Maestro {
     let program = LightProgramDefault(steps: steps.isEmpty ? LightProgramDefault.defaultSteps : steps)
 
     return Maestro(states: states,
-                   lights: lights,
+                   effects: lights,
                    program: program,
                    logger: logger,
                    verbose: options.verbose)
