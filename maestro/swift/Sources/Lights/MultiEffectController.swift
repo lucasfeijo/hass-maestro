@@ -1,10 +1,10 @@
 import Foundation
 
-/// `LightController` that forwards commands to multiple controllers.
-public final class MultiLightController: LightController {
-    private let controllers: [LightController]
+/// `EffectController` that forwards commands to multiple controllers.
+public final class MultiEffectController: EffectController {
+    private let controllers: [EffectController]
 
-    public init(_ controllers: [LightController]) {
+    public init(_ controllers: [EffectController]) {
         self.controllers = controllers
     }
 

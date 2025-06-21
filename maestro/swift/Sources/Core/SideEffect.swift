@@ -5,7 +5,7 @@ public enum SideEffect {
 }
 
 extension SideEffect {
-    func perform(using lights: LightController) {
+    func perform(using lights: EffectController) {
         switch self {
         case .setLight(let state):
             lights.setLightState(state: state)

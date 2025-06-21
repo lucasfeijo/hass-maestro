@@ -2,13 +2,13 @@ import Foundation
 
 public final class Maestro {
     private let states: StateProvider
-    private let lights: LightController
+    private let lights: EffectController
     private let program: LightProgram
     private let logger: Logger
     private let verbose: Bool
 
     public init(states: StateProvider,
-                lights: LightController,
+                lights: EffectController,
                 program: LightProgram,
                 logger: Logger,
                 verbose: Bool = false) {

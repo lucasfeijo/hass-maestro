@@ -1,8 +1,8 @@
 import Foundation
 
-/// `LightController` implementation that prints light commands instead of
+/// `EffectController` implementation that prints light commands instead of
 /// sending them to Home Assistant. Useful for debugging.
-public final class LoggingLightController: LightController {
+public final class LoggingEffectController: EffectController {
     private let logger: Logger
 
     public init(logger: Logger = Logger(pusher: nil)) {
