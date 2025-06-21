@@ -39,7 +39,8 @@ swift run maestro
  --simulate # print light commands to stdout instead of sending them
  --verbose # print commands while also sending them
  --no-notify # disable Home Assistant persistent notifications on failures
- --program secondary # choose the light program to run (`default` or `secondary`)
+ --program baseScene,kitchenSink,tvShelfGroup,globalBrightness,wledMain \
+    # configure which pipeline steps run
  --port 8080 # port for the HTTP server (default 8080)
 ```
 

@@ -2,7 +2,23 @@ import Foundation
 
 public struct LightProgramDefault: LightProgram {
     public let name = "default"
-    public init() {}
+    private let steps: [any ProgramStep]
+
+    public static let defaultSteps: [any ProgramStep] = [
+        BaseSceneStep(),
+        KitchenSinkStep(),
+        TvShelfGroupStep(),
+        GlobalBrightnessStep(),
+        WledMainStep()
+    ]
+
+    public static func step(named name: String) -> (any ProgramStep)? {
+        defaultSteps.first { $0.name.lowercased() == name.lowercased() }
+    }
+
+    public init(steps: [any ProgramStep] = LightProgramDefault.defaultSteps) {
+        self.steps = steps
+    }
 
     public func compute(context: StateContext) -> ProgramOutput {
         var sideEffects: [SideEffect] = []
@@ -19,21 +35,30 @@ public struct LightProgramDefault: LightProgram {
 
     // Original method preserved for direct tests
     public func computeStateSet(context: StateContext) -> LightStateChangeset {
-        let scene = context.scene
-        let environment = context.environment
         let states = context.states
         let transition = 2.0
 
-        guard environment.autoMode else {
+        guard context.environment.autoMode else {
             return LightStateChangeset(currentStates: states, desiredStates: [])
         }
 
-        var changes = sceneChanges(scene: scene, environment: environment)
-        applyKitchenSink(scene: scene, environment: environment, changes: &changes)
-        let expanded = expandTvShelfGroup(changes: changes, environment: environment, transition: transition)
-        let scaled = scaleBrightness(changes: expanded, states: states, transition: transition)
-        let finalStates = ensureWledMain(changes: scaled, transition: transition)
-        return LightStateChangeset(currentStates: states, desiredStates: finalStates)
+        var changes: [LightState] = []
+        for step in steps {
+            changes = step.apply(changes: changes, context: context, transition: transition)
+        }
+        return LightStateChangeset(currentStates: states, desiredStates: changes)
+    }
+}
+
+// MARK: - Pipeline Steps
+
+struct BaseSceneStep: ProgramStep {
+    let name = "baseScene"
+
+    func apply(changes: [LightState], context: StateContext, transition: Double) -> [LightState] {
+        var changes = changes
+        changes = sceneChanges(scene: context.scene, environment: context.environment)
+        return changes
     }
 
     private func sceneChanges(scene: StateContext.Scene, environment: StateContext.Environment) -> [LightState] {
@@ -130,10 +155,18 @@ public struct LightProgramDefault: LightProgram {
 
         return changes
     }
+}
 
-    private func applyKitchenSink(scene: StateContext.Scene,
-                                  environment: StateContext.Environment,
-                                  changes: inout [LightState]) {
+struct KitchenSinkStep: ProgramStep {
+    let name = "kitchenSink"
+
+    func apply(changes: [LightState], context: StateContext, transition: Double) -> [LightState] {
+        var changes = changes
+        applyKitchenSink(scene: context.scene, environment: context.environment, changes: &changes)
+        return changes
+    }
+
+    private func applyKitchenSink(scene: StateContext.Scene, environment: StateContext.Environment, changes: inout [LightState]) {
         let sinkColor: (Int, Int, Int, Int)
         if environment.timeOfDay == .daytime || environment.timeOfDay == .preSunset {
             sinkColor = (0, 0, 0, 255)
@@ -154,10 +187,16 @@ public struct LightProgramDefault: LightProgram {
             changes.on("light.kitchen_sink_light_old", brightness: 10)
         }
     }
+}
 
-    private func expandTvShelfGroup(changes: [LightState],
-                                    environment: StateContext.Environment,
-                                    transition: Double) -> [LightState] {
+struct TvShelfGroupStep: ProgramStep {
+    let name = "tvShelfGroup"
+
+    func apply(changes: [LightState], context: StateContext, transition: Double) -> [LightState] {
+        expandTvShelfGroup(changes: changes, environment: context.environment, transition: transition)
+    }
+
+    private func expandTvShelfGroup(changes: [LightState], environment: StateContext.Environment, transition: Double) -> [LightState] {
         var expanded: [LightState] = []
         let shelfIds = (1...5).map { "light.wled_tv_shelf_\($0)" }
         for state in changes {
@@ -193,10 +232,16 @@ public struct LightProgramDefault: LightProgram {
         }
         return expanded
     }
+}
 
-    private func scaleBrightness(changes: [LightState],
-                                 states: HomeAssistantStateMap,
-                                 transition: Double) -> [LightState] {
+struct GlobalBrightnessStep: ProgramStep {
+    let name = "globalBrightness"
+
+    func apply(changes: [LightState], context: StateContext, transition: Double) -> [LightState] {
+        scaleBrightness(changes: changes, states: context.states, transition: transition)
+    }
+
+    private func scaleBrightness(changes: [LightState], states: HomeAssistantStateMap, transition: Double) -> [LightState] {
         let scaleStr = states["input_number.living_scene_brightness_percentage"]?["state"] as? String ?? "100"
         let scalePct = Double(scaleStr) ?? 100
         let scale = max(0.0, min(scalePct, 100.0)) / 100.0
@@ -216,9 +261,16 @@ public struct LightProgramDefault: LightProgram {
                               transitionDuration: transition)
         }
     }
+}
 
-    private func ensureWledMain(changes: [LightState],
-                                transition: Double) -> [LightState] {
+struct WledMainStep: ProgramStep {
+    let name = "wledMain"
+
+    func apply(changes: [LightState], context: StateContext, transition: Double) -> [LightState] {
+        ensureWledMain(changes: changes, transition: transition)
+    }
+
+    private func ensureWledMain(changes: [LightState], transition: Double) -> [LightState] {
         let mainId = "light.wled_tv_shelf_main"
         let hasShelfOn = changes.contains { state in
             state.entityId.hasPrefix("light.wled_tv_shelf_") &&
