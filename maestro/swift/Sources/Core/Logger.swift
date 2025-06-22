@@ -19,7 +19,10 @@ public struct Logger: @unchecked Sendable {
     }
 
     private func colored(_ text: String, color: String) -> String {
-        return color + text + Color.reset
+        return text
+            .split(separator: "\n", omittingEmptySubsequences: false)
+            .map { color + $0 + Color.reset }
+            .joined(separator: "\n")
     }
 
     public func log(_ message: String) {
