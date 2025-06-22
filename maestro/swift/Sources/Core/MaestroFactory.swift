@@ -24,7 +24,10 @@ func makeMaestro(from options: MaestroOptions) -> Maestro {
         .split(separator: ",")
         .map { $0.trimmingCharacters(in: .whitespaces).lowercased() } ?? []
     let steps = stepStrings.compactMap(LightProgramDefault.step(named:))
-    let program = LightProgramDefault(steps: steps.isEmpty ? LightProgramDefault.defaultSteps : steps)
+    let program = LightProgramDefault(
+        steps: steps.isEmpty ? LightProgramDefault.defaultSteps : steps,
+        logger: options.verbose ? logger : nil
+    )
 
     return Maestro(states: states,
                    effects: effects,
