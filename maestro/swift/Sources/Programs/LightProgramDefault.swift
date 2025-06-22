@@ -32,7 +32,7 @@ public struct LightProgramDefault: LightProgram {
 
         for step in steps {
             if let logger = logger {
-                logger.log("PROGRAM: \(step.name)")
+                logger.log("STEP: \(step.name)")
             }
             let result = step.apply(changes: changes,
                                     effects: effects,
