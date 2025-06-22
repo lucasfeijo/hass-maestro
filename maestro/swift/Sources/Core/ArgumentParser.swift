@@ -18,7 +18,7 @@ struct MaestroOptions: ParsableArguments {
     var simulate: Bool = false
 
     @Option(name: .customLong("program"), help: "Light program to run")
-    var programName: String = "default"
+    var programName: String?
 
     @Flag(name: [.customLong("no-notify"), .customLong("disable-notifications")], help: "Disable Home Assistant persistent notifications on failures")
     var noNotify: Bool = false
