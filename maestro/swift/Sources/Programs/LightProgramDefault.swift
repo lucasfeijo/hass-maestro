@@ -23,7 +23,6 @@ public struct LightProgramDefault: LightProgram {
 
     public func compute(context: StateContext) -> ProgramOutput {
         let states = context.states
-        let transition = context.environment.lightTransition
 
         var changes: [LightState] = []
         var effects: [SideEffect] = []
@@ -31,8 +30,7 @@ public struct LightProgramDefault: LightProgram {
         for step in steps {
             let result = step.apply(changes: changes,
                                     effects: effects,
-                                    context: context,
-                                    transition: transition)
+                                    context: context)
             changes = result.0
             effects = result.1
             if !context.environment.autoMode { break }

@@ -1,7 +1,7 @@
 struct InitialEffectsStep: ProgramStep {
     let name = "initialEffects"
 
-    func apply(changes: [LightState], effects: [SideEffect], context: StateContext, transition: Double) -> ([LightState], [SideEffect]) {
+    func apply(changes: [LightState], effects: [SideEffect], context: StateContext) -> ([LightState], [SideEffect]) {
         var effects = effects
 
         if !context.environment.kitchenPresence {
