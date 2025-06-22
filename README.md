@@ -40,7 +40,7 @@ swift run maestro
  --verbose # print commands while also sending them
  --no-notify # disable Home Assistant persistent notifications on failures
  --program baseScene,kitchenSink,tvShelfGroup,globalBrightness,wledMain \
-    # configure which pipeline steps run
+    # configure which pipeline steps run (omit to run the full program)
  --port 8080 # port for the HTTP server (default 8080)
 ```
 

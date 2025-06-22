@@ -20,7 +20,7 @@ options:
   token: ''
   simulate: false
   no_notify: false
-  program: default
+  program: ''
   verbose: false
 
 # Option schema used by Home Assistant to validate user input.

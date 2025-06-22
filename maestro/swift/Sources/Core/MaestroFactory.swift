@@ -20,9 +20,9 @@ func makeMaestro(from options: MaestroOptions) -> Maestro {
             haEffects
     }
 
-    let stepStrings = options.programName
+    let stepStrings = options.programName?
         .split(separator: ",")
-        .map { $0.trimmingCharacters(in: .whitespaces).lowercased() }
+        .map { $0.trimmingCharacters(in: .whitespaces).lowercased() } ?? []
     let steps = stepStrings.compactMap(LightProgramDefault.step(named:))
     let program = LightProgramDefault(steps: steps.isEmpty ? LightProgramDefault.defaultSteps : steps)
 
