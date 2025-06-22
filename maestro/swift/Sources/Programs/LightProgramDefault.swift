@@ -3,6 +3,7 @@ import Foundation
 public struct LightProgramDefault: LightProgram {
     public let name = "default"
     private let steps: [any ProgramStep]
+    private let logger: Logger?
 
     public static let defaultSteps: [any ProgramStep] = [
         InitialEffectsStep(),
@@ -17,8 +18,10 @@ public struct LightProgramDefault: LightProgram {
         defaultSteps.first { $0.name.lowercased() == name.lowercased() }
     }
 
-    public init(steps: [any ProgramStep] = LightProgramDefault.defaultSteps) {
+    public init(steps: [any ProgramStep] = LightProgramDefault.defaultSteps,
+                logger: Logger? = nil) {
         self.steps = steps
+        self.logger = logger
     }
 
     public func compute(context: StateContext) -> ProgramOutput {
@@ -28,6 +31,9 @@ public struct LightProgramDefault: LightProgram {
         var effects: [SideEffect] = []
 
         for step in steps {
+            if let logger = logger {
+                logger.log("STEP: \(step.name)")
+            }
             let result = step.apply(changes: changes,
                                     effects: effects,
                                     context: context)
