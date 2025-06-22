@@ -31,21 +31,33 @@ public final class Maestro {
     ///
     /// If any step fails, the error is logged and the process stops.
     public func run() {
-        if verbose {
-            logger.log("▶️ Running program \(program.name)")
-        }
+        if verbose { logger.log("▶️ Running program \(program.name)") }
 
+        if verbose { logger.log("STATE: fetching states") }
         let result = states.fetchAllStates()
         switch result {
         case .success(let states):
+            if verbose { logger.log("STATE: fetched \(states.count) entries") }
+
+            if verbose { logger.log("CONTEXT: building state context") }
             let context = StateContext(states: states)
-            if verbose {
-                logger.log(context.description)
-            }
+            if verbose { logger.log("CONTEXT: \n\(context.description)") }
+
+            if verbose { logger.log("PROGRAM: computing changes") }
             let output = program.compute(context: context)
+            if verbose {
+                logger.log("PROGRAM: produced \(output.changeset.desiredStates.count) desired states and \(output.sideEffects.count) side effects")
+            }
+
+            if verbose { logger.log("CHANGESET: simplifying changes") }
             let lightEffects = output.changeset.simplified.map { SideEffect.setLight($0) }
+            if verbose { logger.log("CHANGESET: \(lightEffects.count) changes after simplification") }
+
             let allEffects = output.sideEffects + lightEffects
-            allEffects.forEach { $0.perform(using: effects) }
+            for effect in allEffects {
+                if verbose { logger.log("LIGHTS: \(effect.description)") }
+                effect.perform(using: effects)
+            }
         case .failure(let error):
             logger.error("Failed to fetch home assistant states: \(error)")
         }

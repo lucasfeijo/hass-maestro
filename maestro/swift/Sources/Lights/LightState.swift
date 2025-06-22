@@ -28,6 +28,22 @@ public struct LightState {
     }
 }
 
+extension LightState: CustomStringConvertible {
+    public var description: String {
+        let stateStr = on ? "on" : "off"
+        var parts: [String] = ["\(entityId) -> \(stateStr)"]
+        if let b = brightness { parts.append("brightness:\(b)") }
+        if let ct = colorTemperature { parts.append("colorTemp:\(ct)") }
+        if let rgb = rgbColor { parts.append("rgb:(\(rgb.0),\(rgb.1),\(rgb.2))") }
+        if let rgbw = rgbwColor {
+            parts.append("rgbw:(\(rgbw.0),\(rgbw.1),\(rgbw.2),\(rgbw.3))")
+        }
+        if let effect = effect { parts.append("effect:\(effect)") }
+        if let t = transitionDuration { parts.append("transition:\(t)") }
+        return parts.joined(separator: " ")
+    }
+}
+
 public extension Array where Element == LightState {
     mutating func on(_ entityId: String,
                      brightness: Int? = nil,
