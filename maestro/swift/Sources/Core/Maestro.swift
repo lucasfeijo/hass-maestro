@@ -54,10 +54,16 @@ public final class Maestro {
             if verbose { logger.log("CHANGESET: \(lightEffects.count) changes after simplification") }
 
             let allEffects = output.sideEffects + lightEffects
+            let group = DispatchGroup()
             for effect in allEffects {
-                if verbose { logger.log("LIGHTS: \(effect.description)") }
-                effect.perform(using: effects)
+                group.enter()
+                DispatchQueue.global().async {
+                    if self.verbose { self.logger.log("EFFECT: \(effect.description)") }
+                    effect.perform(using: self.effects)
+                    group.leave()
+                }
             }
+            group.wait()
         case .failure(let error):
             logger.error("Failed to fetch home assistant states: \(error)")
         }
