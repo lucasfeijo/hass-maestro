@@ -58,7 +58,7 @@ public final class Maestro {
             for effect in allEffects {
                 group.enter()
                 DispatchQueue.global().async {
-                    if self.verbose { self.logger.log("LIGHTS: \(effect.description)") }
+                    if self.verbose { self.logger.log("EFFECT: \(effect.description)") }
                     effect.perform(using: self.effects)
                     group.leave()
                 }
