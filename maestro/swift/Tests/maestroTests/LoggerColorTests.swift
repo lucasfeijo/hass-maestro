@@ -8,6 +8,7 @@ final class LoggerColorTests: XCTestCase {
         dup2(pipe.fileHandleForWriting.fileDescriptor, STDOUT_FILENO)
         block()
         fflush(stdout)
+        pipe.fileHandleForWriting.closeFile()
         dup2(original, STDOUT_FILENO)
         let data = pipe.fileHandleForReading.readDataToEndOfFile()
         return String(data: data, encoding: .utf8) ?? ""
