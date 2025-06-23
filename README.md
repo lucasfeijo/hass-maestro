@@ -65,11 +65,12 @@ Found`.
 
 ### `GET /configure`
 
-Serves a small web interface to pick which program steps run and in what
-order. Steps can be removed, dragged to reorder and re-added from a "Removed"
-list. A "Reset" button restores the command-line defaults. Changes are posted
-asynchronously to persist the selection under `/data/step_order.json` without a
-page reload.
+Serves a small Bootstrap-based interface to pick which program steps run and
+in what order. The list initially reflects the current step order that Maestro
+will execute. Steps can be removed, dragged to reorder and re-added from a
+"Removed" list. A "Reset" button restores the command-line defaults. Changes
+are posted asynchronously using `fetch` so the selection is saved under
+`/data/step_order.json` without reloading the page.
 
 ## Pipeline
 

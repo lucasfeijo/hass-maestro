@@ -71,3 +71,14 @@ public final class Maestro {
         }
     }
 }
+
+extension Maestro {
+    /// Names of the program steps in the order they will be executed.
+    /// Returns an empty array if the program does not expose its steps.
+    func stepNames() -> [String] {
+        if let defaultProgram = program as? LightProgramDefault {
+            return defaultProgram.stepNames
+        }
+        return []
+    }
+}

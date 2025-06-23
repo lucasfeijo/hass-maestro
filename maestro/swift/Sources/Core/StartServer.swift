@@ -20,19 +20,19 @@ private func configureHTML(selected: [String], removed: [String]) -> String {
     <!DOCTYPE html>
     <html><head><meta charset='utf-8'/>
     <title>Configure Maestro</title>
+    <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css' rel='stylesheet'>
     <style>
-    li{list-style:none;padding:4px;margin:2px;background:#eee;display:flex;justify-content:space-between;}
     li.drag{opacity:0.5;}
     #removed li{background:#f9d3d3;cursor:pointer;}
     .remove{margin-left:8px;cursor:pointer;}
     </style>
-    </head><body>
-    <h1>Program Steps</h1>
-    <ul id='list'></ul>
+    </head><body class='container py-3'>
+    <h1 class='mb-3'>Program Steps</h1>
+    <ul id='list' class='list-group mb-3'></ul>
     <h2>Removed Steps</h2>
-    <ul id='removed'></ul>
-    <button id='save'>Save</button>
-    <button id='reset'>Reset</button>
+    <ul id='removed' class='list-group mb-3'></ul>
+    <button id='save' class='btn btn-primary me-2'>Save</button>
+    <button id='reset' class='btn btn-secondary'>Reset</button>
     <script>
     const list=document.getElementById('list');
     const removedList=document.getElementById('removed');
@@ -42,6 +42,7 @@ private func configureHTML(selected: [String], removed: [String]) -> String {
         const li=document.createElement('li');
         li.textContent=name;
         li.dataset.name=name;
+        li.className='list-group-item d-flex justify-content-between';
         if(withRemove){
             li.draggable=true;
             const btn=document.createElement('span');
@@ -128,7 +129,7 @@ func startServer(on port: Int32, maestro: Maestro) throws {
                         } else if path == "/configure" {
                             let dummy = StateContext(states: [:])
                             let all = LightProgramDefault.defaultSteps.map { $0(dummy).name }
-                            let selected = StepOrderStorage.load() ?? all
+                            let selected = StepOrderStorage.load() ?? maestro.stepNames()
                             let removed = all.filter { !selected.contains($0) }
                             body = configureHTML(selected: selected, removed: removed)
                         } else {

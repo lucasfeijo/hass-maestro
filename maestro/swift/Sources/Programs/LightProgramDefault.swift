@@ -29,6 +29,14 @@ public struct LightProgramDefault: LightProgram {
         self.logger = logger
     }
 
+    /// Human readable names for the currently configured step order.
+    /// Used by the web interface to pre-populate the list with the
+    /// sequence Maestro will actually run.
+    public var stepNames: [String] {
+        let dummy = StateContext(states: [:])
+        return steps.map { $0(dummy).name }
+    }
+
     public func compute(context: StateContext) -> ProgramOutput {
         let states = context.states
         var effects: [SideEffect] = []

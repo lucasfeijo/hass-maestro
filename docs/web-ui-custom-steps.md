@@ -15,12 +15,10 @@ This document outlines a future feature to expose a small web interface for conf
 
 1. **Expose an HTTP page**
    - Add `webui: http://[HOST]:[PORT:8080]/configure` to `maestro/config.yaml` so Home Assistant shows an "Open Web UI" link.
-   - Provide a `GET /configure` route which serves a basic HTML/JS interface.
-   - Include an endpoint like `POST /configure` to accept the chosen step list.
-     The page should send this request asynchronously using `fetch` so the UI
-     doesn't reload.
-   - Offer a `POST /configure/reset` endpoint that clears any saved list and
-     reverts to the command line defaults.
+   - Provide a `GET /configure` route which serves an HTML/JS interface styled with [Bootstrap](https://getbootstrap.com/).
+   - The page should open using the current step order from Maestro, not just the defaults.
+   - Include an endpoint like `POST /configure` to accept the chosen step list. The page sends this request asynchronously using `fetch` so the UI doesn't reload.
+   - Offer a `POST /configure/reset` endpoint that clears any saved list and reverts to the command line defaults.
 
 2. **List available steps**
    - Read step names from `LightProgramDefault.defaultSteps` using the same lookup logic as the `--program` option.
