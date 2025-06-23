@@ -63,6 +63,12 @@ Replace `8080` with the port specified by `--port` if different.
 If the path is anything other than `/run`, the server responds with `404 Not
 Found`.
 
+### `GET /configure`
+
+Serves a simple web interface to choose which program steps run and in what
+order. Saving changes posts them back asynchronously to persist the selection
+under `/data/step_order.json`.
+
 ## Pipeline
 
 The maestro pipeline consists of 5 steps:
