@@ -14,8 +14,12 @@ enum StepOrderStorage {
     }
 
     static func save(_ steps: [String]) {
+        let url = fileURL
+        let dir = url.deletingLastPathComponent()
+        try? FileManager.default.createDirectory(at: dir,
+                                                withIntermediateDirectories: true)
         if let data = try? JSONEncoder().encode(steps) {
-            try? data.write(to: fileURL, options: [.atomic])
+            try? data.write(to: url, options: [.atomic])
         }
     }
 

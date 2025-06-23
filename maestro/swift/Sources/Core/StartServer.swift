@@ -11,11 +11,13 @@ import ucrt
 #error("Unknown platform")
 #endif
 
-private func configureHTML(selected: [String], removed: [String]) -> String {
+private func configureHTML(selected: [String], removed: [String], defaults: [String]) -> String {
     let selectedData = try! JSONEncoder().encode(selected)
     let selectedJSON = String(data: selectedData, encoding: .utf8) ?? "[]"
     let removedData = try! JSONEncoder().encode(removed)
     let removedJSON = String(data: removedData, encoding: .utf8) ?? "[]"
+    let defaultsData = try! JSONEncoder().encode(defaults)
+    let defaultsJSON = String(data: defaultsData, encoding: .utf8) ?? "[]"
     return """
     <!DOCTYPE html>
     <html><head><meta charset='utf-8'/>
@@ -38,6 +40,7 @@ private func configureHTML(selected: [String], removed: [String]) -> String {
     const removedList=document.getElementById('removed');
     const names = \(selectedJSON);
     const removed = \(removedJSON);
+    const defaults = \(defaultsJSON);
     function makeItem(name, withRemove){
         const li=document.createElement('li');
         li.textContent=name;
@@ -71,7 +74,7 @@ private func configureHTML(selected: [String], removed: [String]) -> String {
     };
     document.getElementById('reset').onclick=async()=>{
         await fetch('/configure/reset',{method:'POST'});
-        names.splice(0,names.length,...removed.concat(names));
+        names.splice(0,names.length,...defaults);
         removed.length=0;
         render();
     };
@@ -131,7 +134,9 @@ func startServer(on port: Int32, maestro: Maestro) throws {
                             let all = LightProgramDefault.defaultSteps.map { $0(dummy).name }
                             let selected = StepOrderStorage.load() ?? maestro.defaultNames()
                             let removed = all.filter { !selected.contains($0) }
-                            body = configureHTML(selected: selected, removed: removed)
+                            body = configureHTML(selected: selected,
+                                                  removed: removed,
+                                                  defaults: maestro.defaultNames())
                         } else {
                             statusLine = "HTTP/1.1 404 Not Found"
                             body = "Not Found"

@@ -7,7 +7,7 @@ This document outlines a future feature to expose a small web interface for conf
 - Provide a simple UI served by Maestro that lists available steps.
 - Allow users to enable/disable steps and reorder them via drag-and-drop or arrow buttons.
 - Let users remove steps by clicking an "x" and re-add them from a separate list.
-- Provide a "Reset" button to restore the command-line defaults.
+- Provide a "Reset" button to restore the command-line default order.
 - Persist the selected order so that subsequent runs reuse it.
 - Use the `--program` command line argument as the initial default sequence. Once the user saves a configuration through the UI, that configuration overrides the default until changed again.
 
