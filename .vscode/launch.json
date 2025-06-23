@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:hass-maestro}/maestro/swift",
+            "name": "Debug maestro (maestro/swift)",
+            "program": "${workspaceFolder:hass-maestro}/maestro/swift/.build/debug/maestro",
+            "preLaunchTask": "swift: Build Debug maestro (maestro/swift)"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:hass-maestro}/maestro/swift",
+            "name": "Release maestro (maestro/swift)",
+            "program": "${workspaceFolder:hass-maestro}/maestro/swift/.build/release/maestro",
+            "preLaunchTask": "swift: Build Release maestro (maestro/swift)"
+        }
+    ]
+}
