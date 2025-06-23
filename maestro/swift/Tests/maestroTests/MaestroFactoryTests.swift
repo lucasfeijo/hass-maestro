@@ -37,4 +37,16 @@ final class MaestroFactoryTests: XCTestCase {
         let names = factories.map { $0(dummy).name }
         XCTAssertEqual(names.first, "globalBrightness")
     }
+
+    func testFactoryInitializesStepOrderFile() {
+        let path = NSTemporaryDirectory() + "steps.json"
+        setenv("STEP_ORDER_PATH", path, 1)
+        unlink(path)
+        let options = parseArguments(["maestro", "--program", "globalbrightness"])
+        _ = makeMaestro(from: options)
+        let stored = StepOrderStorage.load()
+        XCTAssertEqual(stored, ["globalbrightness"])
+        StepOrderStorage.reset()
+        unsetenv("STEP_ORDER_PATH")
+    }
 }

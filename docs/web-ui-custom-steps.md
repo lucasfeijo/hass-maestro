@@ -27,7 +27,8 @@ This document outlines a future feature to expose a small web interface for conf
 
 3. **Persist configuration**
    - Save the selected list under `/data/step_order.json` (or similar) inside the add-on data directory.
-   - At startup, if this file exists, load the steps from it instead of the `--program` argument.
+   - Save the command-line `--program` order to the file the first time Maestro starts.
+   - On startup, if this file exists, load the steps from it instead of the `--program` argument.
 
 4. **Fallback behaviour**
    - If no saved configuration is found, build the program from the command line `--program` option.

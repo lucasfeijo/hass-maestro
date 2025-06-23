@@ -73,6 +73,8 @@ A "Reset" button clears the saved file and restores the command-line default
 order. Changes are posted asynchronously using `fetch` so the selection is stored
 without reloading the page. Maestro reads `step_order.json` on every run, so
 updates take effect immediately.
+On first launch the server saves the command-line order to this file so it is
+always available for editing.
 
 ## Pipeline
 

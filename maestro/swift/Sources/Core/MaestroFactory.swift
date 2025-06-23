@@ -30,6 +30,8 @@ func makeMaestro(from options: MaestroOptions) -> Maestro {
         defaultStepStrings = LightProgramDefault.defaultSteps.map { $0(dummy).name }
     }
 
+    StepOrderStorage.initialize(with: defaultStepStrings)
+
     let initialNames = StepOrderStorage.load() ?? defaultStepStrings
     let factories = initialNames.compactMap(LightProgramDefault.step(named:))
     let program = LightProgramDefault(

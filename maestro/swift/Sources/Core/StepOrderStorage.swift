@@ -23,6 +23,12 @@ enum StepOrderStorage {
         }
     }
 
+    /// Saves `steps` only if no file already exists.
+    static func initialize(with steps: [String]) {
+        guard load() == nil else { return }
+        save(steps)
+    }
+
     static func reset() {
         try? FileManager.default.removeItem(at: fileURL)
     }
