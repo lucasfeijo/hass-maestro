@@ -63,6 +63,19 @@ Replace `8080` with the port specified by `--port` if different.
 If the path is anything other than `/run`, the server responds with `404 Not
 Found`.
 
+### `GET /configure`
+
+Serves a small Bootstrap-based interface to pick which program steps run and
+in what order. The list loads the current contents of `/data/step_order.json`
+or falls back to the command-line defaults if that file doesn't exist. Steps
+can be removed, dragged to reorder and re-added from a "Removed" list.
+A "Reset" button clears the saved file and restores the command-line default
+order. Changes are posted asynchronously using `fetch` so the selection is stored
+without reloading the page. Maestro reads `step_order.json` on every run, so
+updates take effect immediately.
+On first launch the server saves the command-line order to this file so it is
+always available for editing.
+
 ## Pipeline
 
 The maestro pipeline consists of 5 steps:

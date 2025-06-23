@@ -30,6 +30,7 @@ public struct LightProgramDefault: LightProgram {
         self.logger = logger
     }
 
+
     public func compute(context: StateContext) -> ProgramOutput {
         let states = context.states
         var effects: [SideEffect] = []

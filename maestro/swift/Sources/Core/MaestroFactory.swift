@@ -20,10 +20,20 @@ func makeMaestro(from options: MaestroOptions) -> Maestro {
             haEffects
     }
 
-    let stepStrings = options.programName?
-        .split(separator: ",")
-        .map { $0.trimmingCharacters(in: .whitespaces).lowercased() } ?? []
-    let factories = stepStrings.compactMap(LightProgramDefault.step(named:))
+    let defaultStepStrings: [String]
+    if let program = options.programName {
+        defaultStepStrings = program
+            .split(separator: ",")
+            .map { $0.trimmingCharacters(in: .whitespaces).lowercased() }
+    } else {
+        let dummy = StateContext(states: [:])
+        defaultStepStrings = LightProgramDefault.defaultSteps.map { $0(dummy).name }
+    }
+
+    StepOrderStorage.initialize(with: defaultStepStrings)
+
+    let initialNames = StepOrderStorage.load() ?? defaultStepStrings
+    let factories = initialNames.compactMap(LightProgramDefault.step(named:))
     let program = LightProgramDefault(
         steps: factories.isEmpty ? LightProgramDefault.defaultSteps : factories,
         logger: options.verbose ? logger : nil
@@ -33,5 +43,6 @@ func makeMaestro(from options: MaestroOptions) -> Maestro {
                    effects: effects,
                    program: program,
                    logger: logger,
+                   defaultStepNames: defaultStepStrings,
                    verbose: options.verbose)
 }

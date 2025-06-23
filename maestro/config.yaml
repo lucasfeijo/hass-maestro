@@ -11,6 +11,7 @@ startup: services
 homeassistant_api: true
 ports:
   8080/tcp: 8080
+webui: http://[HOST]:[PORT:8080]/configure
 image: "ghcr.io/lucasfeijo/{arch}-addon-maestro"
 
 # Default option values exposed to the add-on UI. These are forwarded as
