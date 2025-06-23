@@ -129,7 +129,7 @@ func startServer(on port: Int32, maestro: Maestro) throws {
                         } else if path == "/configure" {
                             let dummy = StateContext(states: [:])
                             let all = LightProgramDefault.defaultSteps.map { $0(dummy).name }
-                            let selected = StepOrderStorage.load() ?? maestro.stepNames()
+                            let selected = StepOrderStorage.load() ?? maestro.defaultNames()
                             let removed = all.filter { !selected.contains($0) }
                             body = configureHTML(selected: selected, removed: removed)
                         } else {

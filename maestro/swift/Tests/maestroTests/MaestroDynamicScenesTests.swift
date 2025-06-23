@@ -38,7 +38,11 @@ final class MaestroDynamicScenesTests: XCTestCase {
             "input_boolean.living_scene_auto": ["state": "on"]
         ])
         let effects = DummyEffectController()
-        let maestro = Maestro(states: provider, effects: effects, program: StubProgram(), logger: Logger(pusher: nil))
+        let maestro = Maestro(states: provider,
+                              effects: effects,
+                              program: StubProgram(),
+                              logger: Logger(pusher: nil),
+                              defaultStepNames: [])
         maestro.run()
         XCTAssertEqual(effects.stopCount, 1)
     }
@@ -49,7 +53,11 @@ final class MaestroDynamicScenesTests: XCTestCase {
             "input_boolean.living_scene_auto": ["state": "on"]
         ])
         let effects = DummyEffectController()
-        let maestro = Maestro(states: provider, effects: effects, program: StubProgram(), logger: Logger(pusher: nil))
+        let maestro = Maestro(states: provider,
+                              effects: effects,
+                              program: StubProgram(),
+                              logger: Logger(pusher: nil),
+                              defaultStepNames: [])
         maestro.run()
         XCTAssertEqual(effects.stopCount, 0)
     }
@@ -61,7 +69,11 @@ final class MaestroDynamicScenesTests: XCTestCase {
             "input_boolean.kitchen_extra_brightness": ["state": "on"]
         ])
         let effects = DummyEffectController()
-        let maestro = Maestro(states: provider, effects: effects, program: StubProgram(), logger: Logger(pusher: nil))
+        let maestro = Maestro(states: provider,
+                              effects: effects,
+                              program: StubProgram(),
+                              logger: Logger(pusher: nil),
+                              defaultStepNames: [])
         maestro.run()
         XCTAssertEqual(effects.boolChanges.first?.0, "input_boolean.kitchen_extra_brightness")
         XCTAssertEqual(effects.boolChanges.first?.1, false)

@@ -3,20 +3,28 @@ import Foundation
 public final class Maestro {
     private let states: StateProvider
     private let effects: EffectController
-    private let program: LightProgram
+    private var program: LightProgram
     private let logger: Logger
     private let verbose: Bool
+    private let defaultStepNames: [String]
 
     public init(states: StateProvider,
                 effects: EffectController,
                 program: LightProgram,
                 logger: Logger,
+                defaultStepNames: [String],
                 verbose: Bool = false) {
         self.states = states
         self.effects = effects
         self.program = program
         self.logger = logger
         self.verbose = verbose
+        self.defaultStepNames = defaultStepNames
+    }
+
+    /// The default step order configured via command line options.
+    func defaultNames() -> [String] {
+        defaultStepNames
     }
 
 
@@ -31,6 +39,12 @@ public final class Maestro {
     ///
     /// If any step fails, the error is logged and the process stops.
     public func run() {
+        let stepNames = StepOrderStorage.load() ?? defaultStepNames
+        let factories = stepNames.compactMap(LightProgramDefault.step(named:))
+        program = LightProgramDefault(
+            steps: factories.isEmpty ? LightProgramDefault.defaultSteps : factories,
+            logger: verbose ? logger : nil
+        )
         if verbose { logger.log("▶️ Running program \(program.name)") }
 
         if verbose { logger.log("STATE: fetching states") }
@@ -72,13 +86,3 @@ public final class Maestro {
     }
 }
 
-extension Maestro {
-    /// Names of the program steps in the order they will be executed.
-    /// Returns an empty array if the program does not expose its steps.
-    func stepNames() -> [String] {
-        if let defaultProgram = program as? LightProgramDefault {
-            return defaultProgram.stepNames
-        }
-        return []
-    }
-}
