@@ -31,14 +31,20 @@ public struct LightProgramDefault: LightProgram {
         var effects: [SideEffect] = []
 
         for step in steps {
-            if let logger = logger {
-                logger.log("STEP: \(step.name)")
-            }
             let result = step.apply(changes: changes,
                                     effects: effects,
                                     context: context)
             changes = result.0
             effects = result.1
+
+            if let logger = logger {
+                let allEffects = changes + effects as [CustomStringConvertible]
+                logger.log("--- STEP: \(step.name) (\(allEffects.count) effects) ---")
+                for effect in allEffects {
+                    logger.log(effect.description)
+                }
+            }
+
             if !context.environment.autoMode { break }
         }
 

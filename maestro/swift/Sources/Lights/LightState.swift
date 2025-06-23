@@ -32,14 +32,14 @@ extension LightState: CustomStringConvertible {
     public var description: String {
         let stateStr = on ? "on" : "off"
         var parts: [String] = ["\(entityId) -> \(stateStr)"]
-        if let b = brightness { parts.append("brightness:\(b)") }
-        if let ct = colorTemperature { parts.append("colorTemp:\(ct)") }
+        if let b = brightness { parts.append("b:\(b)") }
+        if let ct = colorTemperature { parts.append("ct:\(ct)") }
         if let rgb = rgbColor { parts.append("rgb:(\(rgb.0),\(rgb.1),\(rgb.2))") }
         if let rgbw = rgbwColor {
             parts.append("rgbw:(\(rgbw.0),\(rgbw.1),\(rgbw.2),\(rgbw.3))")
         }
-        if let effect = effect { parts.append("effect:\(effect)") }
-        if let t = transitionDuration { parts.append("transition:\(t)") }
+        if let effect = effect { parts.append("e:\(effect)") }
+        if let t = transitionDuration { parts.append("t:\(t)") }
         return parts.joined(separator: " ")
     }
 }

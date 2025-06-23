@@ -10,18 +10,7 @@ public final class LoggingEffectController: EffectController {
     }
 
     public func setLightState(state: LightState) {
-        var message = "\(state.entityId) -> \(state.on ? "on" : "off")"
-        if let b = state.brightness { message += " brightness:\(b)" }
-        if let ct = state.colorTemperature { message += " colorTemp:\(ct)" }
-        if let rgb = state.rgbColor {
-            message += " rgb:(\(rgb.0),\(rgb.1),\(rgb.2))"
-        }
-        if let rgbw = state.rgbwColor {
-            message += " rgbw:(\(rgbw.0),\(rgbw.1),\(rgbw.2),\(rgbw.3))"
-        }
-        if let effect = state.effect { message += " effect:\(effect)" }
-        if let t = state.transitionDuration { message += " transition:\(t)" }
-        logger.log(message)
+        logger.log(state.description)
     }
 
     public func stopAllDynamicScenes() {
