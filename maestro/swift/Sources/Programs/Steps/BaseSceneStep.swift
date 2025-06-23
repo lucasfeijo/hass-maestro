@@ -1,10 +1,16 @@
 struct BaseSceneStep: ProgramStep {
     let name = "baseScene"
+    let context: StateContext
 
-    func apply(changes: [LightState], effects: [SideEffect], context: StateContext) -> ([LightState], [SideEffect]) {
-        var changes = changes
-        changes = sceneChanges(scene: context.scene, environment: context.environment)
-        return (changes, effects)
+    init(context: StateContext) {
+        self.context = context
+    }
+
+    func process(_ effects: [SideEffect]) -> [SideEffect] {
+        var effects = effects
+        let changes = sceneChanges(scene: context.scene, environment: context.environment)
+        effects.appendLights(changes)
+        return effects
     }
 
     private func sceneChanges(scene: StateContext.Scene, environment: StateContext.Environment) -> [LightState] {

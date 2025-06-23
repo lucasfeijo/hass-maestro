@@ -1,9 +1,16 @@
 struct WledMainStep: ProgramStep {
     let name = "wledMain"
+    let context: StateContext
 
-    func apply(changes: [LightState], effects: [SideEffect], context: StateContext) -> ([LightState], [SideEffect]) {
-        let result = ensureWledMain(changes: changes, transition: context.environment.lightTransition)
-        return (result, effects)
+    init(context: StateContext) {
+        self.context = context
+    }
+
+    func process(_ effects: [SideEffect]) -> [SideEffect] {
+        let lights = ensureWledMain(changes: effects.lights, transition: context.environment.lightTransition)
+        var otherEffects = effects.nonLights
+        otherEffects.appendLights(lights)
+        return otherEffects
     }
 
     private func ensureWledMain(changes: [LightState], transition: Double) -> [LightState] {

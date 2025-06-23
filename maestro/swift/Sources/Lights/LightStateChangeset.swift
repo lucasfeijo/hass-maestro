@@ -3,11 +3,21 @@ import Foundation
 // CHANGESET:
 public struct LightStateChangeset {
     public let currentStates: HomeAssistantStateMap
-    public let desiredStates: [LightState]
+    public let effects: [SideEffect]
 
-    public init(currentStates: HomeAssistantStateMap, desiredStates: [LightState]) {
-        self.desiredStates = desiredStates
+    public init(currentStates: HomeAssistantStateMap, effects: [SideEffect]) {
+        self.effects = effects
         self.currentStates = currentStates
+    }
+
+    /// Light state updates contained in `effects`.
+    public var desiredStates: [LightState] {
+        effects.lights
+    }
+
+    /// Non-light effects contained in `effects`.
+    public var sideEffects: [SideEffect] {
+        effects.nonLights
     }
 
     /// A simplified list of states omitting changes that would not alter

@@ -1,4 +1,5 @@
 public protocol ProgramStep {
     var name: String { get }
-    func apply(changes: [LightState], effects: [SideEffect], context: StateContext) -> ([LightState], [SideEffect])
+    init(context: StateContext)
+    func process(_ effects: [SideEffect]) -> [SideEffect]
 }

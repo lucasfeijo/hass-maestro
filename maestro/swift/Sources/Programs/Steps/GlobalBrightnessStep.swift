@@ -2,10 +2,22 @@ import Foundation
 
 struct GlobalBrightnessStep: ProgramStep {
     let name = "globalBrightness"
+    let context: StateContext
 
-    func apply(changes: [LightState], effects: [SideEffect], context: StateContext) -> ([LightState], [SideEffect]) {
-        let adjusted = scaleBrightness(changes: changes, states: context.states, transition: context.environment.lightTransition)
-        return (adjusted, effects)
+    init(context: StateContext) {
+        self.context = context
+    }
+
+    func process(_ effects: [SideEffect]) -> [SideEffect] {
+        let lights = effects.lights
+        var nonLight = effects.nonLights
+
+        let adjusted = scaleBrightness(changes: lights,
+                                       states: context.states,
+                                       transition: context.environment.lightTransition)
+
+        nonLight.appendLights(adjusted)
+        return nonLight
     }
 
     private func scaleBrightness(changes: [LightState], states: HomeAssistantStateMap, transition: Double) -> [LightState] {

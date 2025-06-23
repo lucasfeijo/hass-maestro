@@ -1,10 +1,17 @@
 struct KitchenSinkStep: ProgramStep {
     let name = "kitchenSink"
+    let context: StateContext
 
-    func apply(changes: [LightState], effects: [SideEffect], context: StateContext) -> ([LightState], [SideEffect]) {
-        var changes = changes
-        applyKitchenSink(scene: context.scene, environment: context.environment, changes: &changes)
-        return (changes, effects)
+    init(context: StateContext) {
+        self.context = context
+    }
+
+    func process(_ effects: [SideEffect]) -> [SideEffect] {
+        var lights: [LightState] = []
+        applyKitchenSink(scene: context.scene, environment: context.environment, changes: &lights)
+        var effects = effects
+        effects.appendLights(lights)
+        return effects
     }
 
     private func applyKitchenSink(scene: StateContext.Scene, environment: StateContext.Environment, changes: inout [LightState]) {
