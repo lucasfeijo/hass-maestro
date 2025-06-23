@@ -25,11 +25,6 @@ struct BaseSceneStep: ProgramStep {
                 changes.on("light.kitchen_led", brightness: 50, effect: "solid")
                 changes.on("light.tripod_lamp", brightness: 10, colorTemperature: 200)
             } else {
-                if !environment.hyperionRunning {
-                    changes.on("light.tv_shelf_group", brightness: 2, effect: "solid")
-                } else {
-                    changes.off("light.tv_shelf_group")
-                }
                 changes.on("light.window_led_strip", brightness: 17, effect: "solid")
                 changes.on(["light.entrance_dining_light", "light.living_entry_door_light", "light.living_fireplace_spot"], brightness: 10)
                 changes.on("light.desk_light", brightness: 5)
@@ -47,12 +42,6 @@ struct BaseSceneStep: ProgramStep {
 
         case .normal:
             if environment.timeOfDay == .daytime || environment.timeOfDay == .preSunset {
-                if !environment.hyperionRunning {
-                    changes.on("light.tv_light", brightness: 50, colorTemperature: 224)
-                    changes.on("light.wled_tv_shelf_4", brightness: 20, rgbwColor: (7, 106, 168, 255), effect: "solid")
-                } else {
-                    changes.off(["light.tv_light", "light.tv_shelf_group"])
-                }
                 changes.on("light.dining_table_light", brightness: 100, colorTemperature: 206)
                 changes.off("light.corner_light")
                 changes.on("light.desk_light", brightness: 40, colorTemperature: 199)
@@ -65,12 +54,6 @@ struct BaseSceneStep: ProgramStep {
                 changes.on("light.zigbee_hub_estante_lights", brightness: 55, colorTemperature: 198)
                 changes.on("light.kitchen_led", brightness: 50, rgbwColor: (0, 0, 0, 255), effect: "solid")
             } else {
-                if !environment.hyperionRunning {
-                    changes.on("light.tv_light", brightness: 51, colorTemperature: 394)
-                    changes.on("light.tv_shelf_group", brightness: 20, rgbwColor: (255, 158, 64, 255), effect: "solid")
-                } else {
-                    changes.off("light.tv_light")
-                }
                 changes.on("light.color_lights_without_tv_light", brightness: 51, colorTemperature: 394)
                 changes.on("light.corner_light", brightness: 30, colorTemperature: 394)
                 changes.on("light.window_led_strip", brightness: 40, rgbColor: (189, 157, 112), effect: "solid")
@@ -80,12 +63,6 @@ struct BaseSceneStep: ProgramStep {
             }
 
         case .bright:
-            if !environment.hyperionRunning {
-                changes.on("light.tv_light", brightness: 75)
-                changes.on("light.tv_shelf_group", brightness: 100, effect: "solid")
-            } else {
-                changes.off(["light.tv_light", "light.tv_shelf_group"])
-            }
             changes.on("light.living_temperature_lights", brightness: 60)
             changes.on("light.color_lights_without_tv_light", brightness: 75)
             changes.on("light.window_led_strip", brightness: 100, effect: "solid")
@@ -93,12 +70,6 @@ struct BaseSceneStep: ProgramStep {
             changes.on("light.kitchen_led", brightness: 100, effect: "solid")
 
         case .brightest:
-            if !environment.hyperionRunning {
-                changes.on("light.tv_light", brightness: 100)
-                changes.on("light.tv_shelf_group", brightness: 100, effect: "solid")
-            } else {
-                changes.off(["light.tv_light", "light.tv_shelf_group"])
-            }
             changes.on(["light.living_temperature_lights", "light.color_lights_without_tv_light", "light.window_led_strip", "light.zigbee_hub_estante_lights", "light.kitchen_led"], brightness: 100)
 
         case .preset:

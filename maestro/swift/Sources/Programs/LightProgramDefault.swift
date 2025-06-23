@@ -9,6 +9,7 @@ public struct LightProgramDefault: LightProgram {
     public static let defaultSteps: [StepFactory] = [
         { InitialEffectsStep(context: $0) },
         { BaseSceneStep(context: $0) },
+        { HyperionStep(context: $0) },
         { KitchenSinkStep(context: $0) },
         { TvShelfGroupStep(context: $0) },
         { GlobalBrightnessStep(context: $0) },
