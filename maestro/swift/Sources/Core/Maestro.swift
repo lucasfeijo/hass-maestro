@@ -51,7 +51,12 @@ public final class Maestro {
 
             if verbose { logger.log("CHANGESET: simplifying changes") }
             let lightEffects = output.changeset.simplified.map { SideEffect.setLight($0) }
-            if verbose { logger.log("CHANGESET: \(lightEffects.count) changes after simplification") }
+            if verbose {
+                logger.log("CHANGESET: \(lightEffects.count) changes after simplification")
+                for effect in lightEffects {
+                    logger.log("\(effect.description)")
+                }
+            }
 
             let allEffects = output.sideEffects + lightEffects
             
