@@ -12,7 +12,8 @@ public struct LightProgramDefault: LightProgram {
         { KitchenSinkStep(context: $0) },
         { TvShelfGroupStep(context: $0) },
         { GlobalBrightnessStep(context: $0) },
-        { WledMainStep(context: $0) }
+        { WledMainStep(context: $0) },
+        { FlattenGroupsStep(context: $0) }
     ]
 
     public static func step(named name: String) -> StepFactory? {
