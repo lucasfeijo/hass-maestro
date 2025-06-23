@@ -1,0 +1,14 @@
+import XCTest
+@testable import maestro
+
+final class StepOrderStorageTests: XCTestCase {
+    func testResetRemovesFile() throws {
+        let path = NSTemporaryDirectory() + "steps.json"
+        setenv("STEP_ORDER_PATH", path, 1)
+        StepOrderStorage.save(["foo"])
+        XCTAssertNotNil(StepOrderStorage.load())
+        StepOrderStorage.reset()
+        XCTAssertNil(StepOrderStorage.load())
+        unsetenv("STEP_ORDER_PATH")
+    }
+}

@@ -11,27 +11,69 @@ import ucrt
 #error("Unknown platform")
 #endif
 
-private func configureHTML(stepNames: [String]) -> String {
-    let data = try! JSONEncoder().encode(stepNames)
-    let json = String(data: data, encoding: .utf8) ?? "[]"
+private func configureHTML(selected: [String], removed: [String]) -> String {
+    let selectedData = try! JSONEncoder().encode(selected)
+    let selectedJSON = String(data: selectedData, encoding: .utf8) ?? "[]"
+    let removedData = try! JSONEncoder().encode(removed)
+    let removedJSON = String(data: removedData, encoding: .utf8) ?? "[]"
     return """
     <!DOCTYPE html>
     <html><head><meta charset='utf-8'/>
     <title>Configure Maestro</title>
-    <style>li{list-style:none;padding:4px;margin:2px;background:#eee;}li.drag{opacity:0.5;}</style>
+    <style>
+    li{list-style:none;padding:4px;margin:2px;background:#eee;display:flex;justify-content:space-between;}
+    li.drag{opacity:0.5;}
+    #removed li{background:#f9d3d3;cursor:pointer;}
+    .remove{margin-left:8px;cursor:pointer;}
+    </style>
     </head><body>
     <h1>Program Steps</h1>
     <ul id='list'></ul>
+    <h2>Removed Steps</h2>
+    <ul id='removed'></ul>
     <button id='save'>Save</button>
+    <button id='reset'>Reset</button>
     <script>
     const list=document.getElementById('list');
-    const names = \(json);
-    function render(){list.innerHTML='';names.forEach(n=>{const li=document.createElement('li');li.textContent=n;li.draggable=true;li.dataset.name=n;list.appendChild(li);});}
+    const removedList=document.getElementById('removed');
+    const names = \(selectedJSON);
+    const removed = \(removedJSON);
+    function makeItem(name, withRemove){
+        const li=document.createElement('li');
+        li.textContent=name;
+        li.dataset.name=name;
+        if(withRemove){
+            li.draggable=true;
+            const btn=document.createElement('span');
+            btn.textContent='x';
+            btn.className='remove';
+            btn.onclick=()=>{removed.push(name);names.splice(names.indexOf(name),1);render();};
+            li.appendChild(btn);
+        } else {
+            li.onclick=()=>{names.push(name);removed.splice(removed.indexOf(name),1);render();};
+        }
+        return li;
+    }
+    function render(){
+        list.innerHTML='';
+        names.forEach(n=>list.appendChild(makeItem(n,true)));
+        removedList.innerHTML='';
+        removed.forEach(n=>removedList.appendChild(makeItem(n,false)));
+    }
     let drag;list.addEventListener('dragstart',e=>{drag=e.target;e.target.classList.add('drag');});
     list.addEventListener('dragend',e=>{e.target.classList.remove('drag');});
     list.addEventListener('dragover',e=>e.preventDefault());
     list.addEventListener('drop',e=>{e.preventDefault();if(e.target.tagName==='LI'&&drag){list.insertBefore(drag,e.target.nextSibling);}});
-    document.getElementById('save').onclick=async()=>{const ordered=Array.from(list.children).map(li=>li.dataset.name);await fetch('/configure',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(ordered)});};
+    document.getElementById('save').onclick=async()=>{
+        const ordered=Array.from(list.children).map(li=>li.dataset.name);
+        await fetch('/configure',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(ordered)});
+    };
+    document.getElementById('reset').onclick=async()=>{
+        await fetch('/configure/reset',{method:'POST'});
+        names.splice(0,names.length,...removed.concat(names));
+        removed.length=0;
+        render();
+    };
     render();
     </script></body></html>
     """
@@ -85,8 +127,10 @@ func startServer(on port: Int32, maestro: Maestro) throws {
                             maestro.run()
                         } else if path == "/configure" {
                             let dummy = StateContext(states: [:])
-                            let names = LightProgramDefault.defaultSteps.map { $0(dummy).name }
-                            body = configureHTML(stepNames: names)
+                            let all = LightProgramDefault.defaultSteps.map { $0(dummy).name }
+                            let selected = StepOrderStorage.load() ?? all
+                            let removed = all.filter { !selected.contains($0) }
+                            body = configureHTML(selected: selected, removed: removed)
                         } else {
                             statusLine = "HTTP/1.1 404 Not Found"
                             body = "Not Found"
@@ -100,6 +144,8 @@ func startServer(on port: Int32, maestro: Maestro) throws {
                                     StepOrderStorage.save(names)
                                 }
                             }
+                        } else if path == "/configure/reset" {
+                            StepOrderStorage.reset()
                         } else {
                             statusLine = "HTTP/1.1 404 Not Found"
                             body = "Not Found"

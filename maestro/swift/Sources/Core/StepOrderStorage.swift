@@ -18,4 +18,8 @@ enum StepOrderStorage {
             try? data.write(to: fileURL, options: [.atomic])
         }
     }
+
+    static func reset() {
+        try? FileManager.default.removeItem(at: fileURL)
+    }
 }

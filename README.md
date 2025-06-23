@@ -65,9 +65,11 @@ Found`.
 
 ### `GET /configure`
 
-Serves a simple web interface to choose which program steps run and in what
-order. Saving changes posts them back asynchronously to persist the selection
-under `/data/step_order.json`.
+Serves a small web interface to pick which program steps run and in what
+order. Steps can be removed, dragged to reorder and re-added from a "Removed"
+list. A "Reset" button restores the command-line defaults. Changes are posted
+asynchronously to persist the selection under `/data/step_order.json` without a
+page reload.
 
 ## Pipeline
 

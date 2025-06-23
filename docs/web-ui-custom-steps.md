@@ -6,6 +6,8 @@ This document outlines a future feature to expose a small web interface for conf
 
 - Provide a simple UI served by Maestro that lists available steps.
 - Allow users to enable/disable steps and reorder them via drag-and-drop or arrow buttons.
+- Let users remove steps by clicking an "x" and re-add them from a separate list.
+- Provide a "Reset" button to restore the command-line defaults.
 - Persist the selected order so that subsequent runs reuse it.
 - Use the `--program` command line argument as the initial default sequence. Once the user saves a configuration through the UI, that configuration overrides the default until changed again.
 
@@ -17,10 +19,13 @@ This document outlines a future feature to expose a small web interface for conf
    - Include an endpoint like `POST /configure` to accept the chosen step list.
      The page should send this request asynchronously using `fetch` so the UI
      doesn't reload.
+   - Offer a `POST /configure/reset` endpoint that clears any saved list and
+     reverts to the command line defaults.
 
 2. **List available steps**
    - Read step names from `LightProgramDefault.defaultSteps` using the same lookup logic as the `--program` option.
-   - Display them with controls to reorder or remove each item.
+   - Display them with controls to reorder or remove each item. Removed steps
+     appear in a separate list where they can be clicked to be re-added.
 
 3. **Persist configuration**
    - Save the selected list under `/data/step_order.json` (or similar) inside the add-on data directory.
