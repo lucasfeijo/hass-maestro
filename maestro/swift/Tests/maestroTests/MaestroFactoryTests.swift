@@ -11,15 +11,13 @@ final class MaestroFactoryTests: XCTestCase {
             return
         }
         let programMirror = Mirror(reflecting: program)
-        guard let steps = programMirror.children.first(where: { $0.label == "steps" })?.value as? [any ProgramStep] else {
+        guard let factories = programMirror.children.first(where: { $0.label == "steps" })?.value as? [LightProgramDefault.StepFactory] else {
             XCTFail("Could not access steps")
             return
         }
-        let stepNames = steps.map { type(of: $0).self }
-        let defaultNames = LightProgramDefault.defaultSteps.map { type(of: $0).self }
-        XCTAssertEqual(stepNames.count, defaultNames.count)
-        for (idx, type) in defaultNames.enumerated() {
-            XCTAssertTrue(stepNames[idx] == type, "Step \(idx) should be \(type)")
-        }
+        let dummy = StateContext(states: [:])
+        let names = factories.map { $0(dummy).name }
+        let defaultNames = LightProgramDefault.defaultSteps.map { $0(dummy).name }
+        XCTAssertEqual(names, defaultNames)
     }
 }

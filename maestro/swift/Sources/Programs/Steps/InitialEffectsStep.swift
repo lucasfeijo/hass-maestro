@@ -1,7 +1,12 @@
 struct InitialEffectsStep: ProgramStep {
     let name = "initialEffects"
+    let context: StateContext
 
-    func apply(changes: [LightState], effects: [SideEffect], context: StateContext) -> ([LightState], [SideEffect]) {
+    init(context: StateContext) {
+        self.context = context
+    }
+
+    func process(_ effects: [SideEffect]) -> [SideEffect] {
         var effects = effects
 
         if !context.environment.kitchenPresence {
@@ -12,7 +17,7 @@ struct InitialEffectsStep: ProgramStep {
             effects.append(.stopAllDynamicScenes)
         }
 
-        return (changes, effects)
+        return effects
     }
 }
 

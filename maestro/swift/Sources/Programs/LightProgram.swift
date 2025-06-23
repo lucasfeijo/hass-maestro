@@ -6,9 +6,9 @@ public struct ProgramOutput {
     public let changeset: LightStateChangeset
     public let sideEffects: [SideEffect]
 
-    public init(changeset: LightStateChangeset, sideEffects: [SideEffect] = []) {
+    public init(changeset: LightStateChangeset, sideEffects: [SideEffect]? = nil) {
         self.changeset = changeset
-        self.sideEffects = sideEffects
+        self.sideEffects = sideEffects ?? changeset.sideEffects
     }
 }
 

@@ -1,9 +1,18 @@
 struct TvShelfGroupStep: ProgramStep {
     let name = "tvShelfGroup"
+    let context: StateContext
 
-    func apply(changes: [LightState], effects: [SideEffect], context: StateContext) -> ([LightState], [SideEffect]) {
-        let result = expandTvShelfGroup(changes: changes, environment: context.environment, transition: context.environment.lightTransition)
-        return (result, effects)
+    init(context: StateContext) {
+        self.context = context
+    }
+
+    func process(_ effects: [SideEffect]) -> [SideEffect] {
+        let lights = expandTvShelfGroup(changes: effects.lights,
+        environment: context.environment,
+        transition: context.environment.lightTransition)
+        var otherEffects = effects.nonLights
+        otherEffects.appendLights(lights)
+        return otherEffects
     }
 
     private func expandTvShelfGroup(changes: [LightState], environment: StateContext.Environment, transition: Double) -> [LightState] {

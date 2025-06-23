@@ -28,7 +28,7 @@ final class MaestroDynamicScenesTests: XCTestCase {
             if !context.environment.kitchenPresence {
                 effects.append(.setInputBoolean(entityId: "input_boolean.kitchen_extra_brightness", state: false))
             }
-            return ProgramOutput(changeset: LightStateChangeset(currentStates: context.states, desiredStates: []), sideEffects: effects)
+            return ProgramOutput(changeset: LightStateChangeset(currentStates: context.states, effects: effects))
         }
     }
 
