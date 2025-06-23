@@ -35,8 +35,8 @@ public struct LightProgramDefault: LightProgram {
 
         for factory in steps {
             let step = factory(context)
-            logger?.log("--- STEP: \(step.name) (\(effects.count) effects) ---")
             effects = step.process(effects)
+            logger?.log("--- STEP: \(step.name) (\(effects.count) effects) ---")
             effects.forEach { logger?.log($0.description) }
             if !context.environment.autoMode { break }
         }
