@@ -64,6 +64,8 @@ public final class Maestro {
                 if verbose { logger.log("EFFECT: \(effect.description)") }
                 effect.perform(using: self.effects)
             }
+
+            if verbose { logger.log("✅ Maestro run completed") }
         case .failure(let error):
             logger.error("Failed to fetch home assistant states: \(error)")
         }
