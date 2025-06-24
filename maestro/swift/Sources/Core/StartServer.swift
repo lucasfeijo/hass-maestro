@@ -58,6 +58,9 @@ func startServer(on port: Int32, maestro: Maestro, options: MaestroOptions) thro
                     switch path {
                     case "/run":
                         maestro.run()
+                        statusLine = "HTTP/1.1 302 Found"
+                        headers = ["Location: /"]
+                        body = ""
                     case "/":
                         statusLine = "HTTP/1.1 200 OK"
                         headers = ["Content-Type: text/html; charset=utf-8"]
