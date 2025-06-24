@@ -51,7 +51,8 @@ The package builds on Linux and macOS. On macOS the POSIX server code uses the
 
 ### `GET /run`
 
-This route triggers a run of the maestro pipeline.
+This route triggers a run of the maestro pipeline and then responds with a
+`302 Found` redirect to `/`.
 
 Example request:
 
@@ -60,8 +61,8 @@ curl http://localhost:8080/run
 ```
 Replace `8080` with the port specified by `--port` if different.
 
-If the path is anything other than `/run`, the server responds with `404 Not
-Found`.
+If the path is anything other than `/run` or `/`, the server responds with
+`404 Not Found`.
 
 ### `GET /`
 
