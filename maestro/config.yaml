@@ -9,6 +9,7 @@ arch:
 init: false
 startup: services
 homeassistant_api: true
+ingress: true
 ports:
   8080/tcp: 8080
 image: "ghcr.io/lucasfeijo/{arch}-addon-maestro"
