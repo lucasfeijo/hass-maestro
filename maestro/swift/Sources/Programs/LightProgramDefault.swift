@@ -35,7 +35,11 @@ public struct LightProgramDefault: LightProgram {
         var effects: [SideEffect] = []
 
         for factory in steps {
-            let step = factory(context)
+            var step = factory(context)
+            if step.skipped {
+                logger?.log("--- STEP: \(step.name) [skipped] ---")
+                continue
+            }
             effects = step.process(effects)
             logger?.log("--- STEP: \(step.name) (\(effects.count) effects) ---")
             effects.forEach { logger?.log($0.description) }

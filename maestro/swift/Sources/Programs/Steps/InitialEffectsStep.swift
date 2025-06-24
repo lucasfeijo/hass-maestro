@@ -1,6 +1,7 @@
 struct InitialEffectsStep: ProgramStep {
     let name = "initialEffects"
     let context: StateContext
+    var skipped: Bool = false
 
     init(context: StateContext) {
         self.context = context

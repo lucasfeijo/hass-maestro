@@ -1,6 +1,7 @@
 struct HyperionStep: ProgramStep {
     let name = "hyperion"
     let context: StateContext
+    var skipped: Bool = false
 
     init(context: StateContext) {
         self.context = context

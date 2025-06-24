@@ -1,6 +1,7 @@
 struct KitchenSinkStep: ProgramStep {
     let name = "kitchenSink"
     let context: StateContext
+    var skipped: Bool = false
 
     init(context: StateContext) {
         self.context = context

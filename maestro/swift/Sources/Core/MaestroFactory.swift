@@ -22,8 +22,19 @@ func makeMaestro(from options: MaestroOptions) -> Maestro {
 
     let stepStrings = options.programName?
         .split(separator: ",")
-        .map { $0.trimmingCharacters(in: .whitespaces).lowercased() } ?? []
-    let factories = stepStrings.compactMap(LightProgramDefault.step(named:))
+        .map { $0.trimmingCharacters(in: .whitespaces) } ?? []
+
+    let factories: [LightProgramDefault.StepFactory] = stepStrings.compactMap { str in
+        let skip = str.hasPrefix("!")
+        let name = skip ? String(str.dropFirst()).lowercased() : str.lowercased()
+        guard let base = LightProgramDefault.step(named: name) else { return nil }
+        return { context in
+            var step = base(context)
+            step.skipped = skip
+            return step
+        }
+    }
+
     let program = LightProgramDefault(
         steps: factories.isEmpty ? LightProgramDefault.defaultSteps : factories,
         logger: options.verbose ? logger : nil

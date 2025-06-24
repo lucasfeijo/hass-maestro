@@ -1,6 +1,7 @@
 struct BaseSceneStep: ProgramStep {
     let name = "baseScene"
     let context: StateContext
+    var skipped: Bool = false
 
     init(context: StateContext) {
         self.context = context
