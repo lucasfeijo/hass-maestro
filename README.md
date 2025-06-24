@@ -63,6 +63,11 @@ Replace `8080` with the port specified by `--port` if different.
 If the path is anything other than `/run`, the server responds with `404 Not
 Found`.
 
+### `GET /`
+
+Opens a simple HTML page displaying the current maestro options. This page
+includes links to trigger `/run` directly.
+
 ## Pipeline
 
 The maestro pipeline consists of 5 steps:
