@@ -1,6 +1,7 @@
 struct TvShelfGroupStep: ProgramStep {
     let name = "tvShelfGroup"
     let context: StateContext
+    var skipped: Bool = false
 
     init(context: StateContext) {
         self.context = context

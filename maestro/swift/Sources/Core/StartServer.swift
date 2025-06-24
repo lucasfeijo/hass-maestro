@@ -11,7 +11,13 @@ import ucrt
 #error("Unknown platform")
 #endif
 /// Minimal HTTP server handling GET requests from Home Assistant.
-func startServer(on port: Int32, maestro: Maestro, options: MaestroOptions) throws {
+func startServer(on port: Int32, maestro initialMaestro: Maestro, options initialOptions: MaestroOptions) throws {
+    var options = initialOptions
+    var maestro = initialMaestro
+
+    let defaultStepNames: [String] = LightProgramDefault.defaultSteps.map { factory in
+        factory(StateContext(states: [:])).name
+    }
     // SOCK_STREAM may be an enum or an Int32 depending on the libc headers
     // being used. Convert it to Int32 in a way that works for both cases.
     let sockStream: Int32 = withUnsafeBytes(of: SOCK_STREAM) { $0.load(as: Int32.self) }
@@ -34,14 +40,25 @@ func startServer(on port: Int32, maestro: Maestro, options: MaestroOptions) thro
     listen(serverFD, 10)
     print("Server listening on port \(port)")
 
+    func currentProgramSteps() -> [(String, Bool)] {
+        let raw = options.programName?.split(separator: ",").map(String.init) ?? defaultStepNames
+        return raw.map { part in
+            if part.hasPrefix("!") {
+                return (String(part.dropFirst()), true)
+            } else {
+                return (part, false)
+            }
+        }
+    }
+
     while true {
         var clientAddr = sockaddr()
         var len: socklen_t = socklen_t(MemoryLayout<sockaddr>.size)
         let clientFD = accept(serverFD, &clientAddr, &len)
         if clientFD < 0 { continue }
 
-        var buffer = [UInt8](repeating: 0, count: 1024)
-        let count = read(clientFD, &buffer, 1024)
+        var buffer = [UInt8](repeating: 0, count: 4096)
+        let count = read(clientFD, &buffer, 4096)
 
         var statusLine = "HTTP/1.1 200 OK"
         var headers = ["Content-Type: text/plain; charset=utf-8"]
@@ -49,44 +66,20 @@ func startServer(on port: Int32, maestro: Maestro, options: MaestroOptions) thro
 
         if count > 0 {
             let request = String(decoding: buffer[0..<count], as: UTF8.self)
-            if request.hasPrefix("GET ") {
-                if let firstLine = request.components(separatedBy: "\r\n").first,
-                   let range = firstLine.range(of: " ") {
-                    let start = firstLine.index(after: range.lowerBound)
-                    let end = firstLine.range(of: " ", range: start..<firstLine.endIndex)?.lowerBound ?? firstLine.endIndex
-                    let path = firstLine[start..<end]
-                    switch path {
-                    case "/run":
-                        maestro.run()
-                        statusLine = "HTTP/1.1 302 Found"
-                        headers = ["Location: /"]
-                        body = ""
-                    case "/":
-                        statusLine = "HTTP/1.1 200 OK"
-                        headers = ["Content-Type: text/html; charset=utf-8"]
-                        body = """
-                        <html>
-                        <head><title>Hass Maestro</title></head>
-                        <body>
-                        <h1>Maestro Options</h1>
-                        <ul>
-                        <li>Base URL: \(options.baseURL)</li>
-                        <li>Token: \(options.token ?? "")</li>
-                        <li>Simulate: \(options.simulate)</li>
-                        <li>Program: \(options.programName ?? "")</li>
-                        <li>Notifications Enabled: \(options.notificationsEnabled)</li>
-                        <li>Port: \(options.port)</li>
-                        <li>Verbose: \(options.verbose)</li>
-                        </ul>
-                        <p><a href=\"/run\">Run now</a></p>
-                        </body>
-                        </html>
-                        """
-                    default:
-                        statusLine = "HTTP/1.1 404 Not Found"
-                        body = "Not Found"
-                    }
-                }
+            guard let firstLine = request.components(separatedBy: "\r\n").first else { continue }
+            let parts = firstLine.split(separator: " ", maxSplits: 2, omittingEmptySubsequences: true)
+            guard parts.count >= 2 else { continue }
+            let method = parts[0]
+            let path = parts[1]
+
+            switch String(path) {
+            case "/run":
+                (statusLine, headers, body) = handleRunRoute(maestro: maestro)
+            case "/":
+                (statusLine, headers, body) = handleRootRoute(method: method, request: request, maestro: &maestro, options: &options, defaultStepNames: defaultStepNames)
+            default:
+                statusLine = "HTTP/1.1 404 Not Found"
+                body = "Not Found"
             }
         }
 

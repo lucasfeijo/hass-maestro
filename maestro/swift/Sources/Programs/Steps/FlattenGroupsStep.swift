@@ -1,6 +1,7 @@
 struct FlattenGroupsStep: ProgramStep {
     let name = "flattenGroups"
     let context: StateContext
+    var skipped: Bool = false
 
     init(context: StateContext) {
         self.context = context

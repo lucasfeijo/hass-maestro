@@ -1,6 +1,7 @@
 struct WledMainStep: ProgramStep {
     let name = "wledMain"
     let context: StateContext
+    var skipped: Bool = false
 
     init(context: StateContext) {
         self.context = context
