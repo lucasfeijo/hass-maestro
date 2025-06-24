@@ -11,7 +11,7 @@ import ucrt
 #error("Unknown platform")
 #endif
 /// Minimal HTTP server handling GET requests from Home Assistant.
-func startServer(on port: Int32, maestro: Maestro) throws {
+func startServer(on port: Int32, maestro: Maestro, options: MaestroOptions) throws {
     // SOCK_STREAM may be an enum or an Int32 depending on the libc headers
     // being used. Convert it to Int32 in a way that works for both cases.
     let sockStream: Int32 = withUnsafeBytes(of: SOCK_STREAM) { $0.load(as: Int32.self) }
@@ -44,6 +44,7 @@ func startServer(on port: Int32, maestro: Maestro) throws {
         let count = read(clientFD, &buffer, 1024)
 
         var statusLine = "HTTP/1.1 200 OK"
+        var headers = ["Content-Type: text/plain; charset=utf-8"]
         var body = "OK"
 
         if count > 0 {
@@ -54,9 +55,31 @@ func startServer(on port: Int32, maestro: Maestro) throws {
                     let start = firstLine.index(after: range.lowerBound)
                     let end = firstLine.range(of: " ", range: start..<firstLine.endIndex)?.lowerBound ?? firstLine.endIndex
                     let path = firstLine[start..<end]
-                    if path == "/run" {
+                    switch path {
+                    case "/run":
                         maestro.run()
-                    } else {
+                    case "/":
+                        statusLine = "HTTP/1.1 200 OK"
+                        headers = ["Content-Type: text/html; charset=utf-8"]
+                        body = """
+                        <html>
+                        <head><title>Hass Maestro</title></head>
+                        <body>
+                        <h1>Maestro Options</h1>
+                        <ul>
+                        <li>Base URL: \(options.baseURL)</li>
+                        <li>Token: \(options.token ?? "")</li>
+                        <li>Simulate: \(options.simulate)</li>
+                        <li>Program: \(options.programName ?? "")</li>
+                        <li>Notifications Enabled: \(options.notificationsEnabled)</li>
+                        <li>Port: \(options.port)</li>
+                        <li>Verbose: \(options.verbose)</li>
+                        </ul>
+                        <p><a href=\"/run\">Run now</a></p>
+                        </body>
+                        </html>
+                        """
+                    default:
                         statusLine = "HTTP/1.1 404 Not Found"
                         body = "Not Found"
                     }
@@ -64,7 +87,8 @@ func startServer(on port: Int32, maestro: Maestro) throws {
             }
         }
 
-        let response = "\(statusLine)\r\nContent-Length: \(body.utf8.count)\r\n\r\n\(body)"
+        let headerString = headers.joined(separator: "\r\n")
+        let response = "\(statusLine)\r\n\(headerString)\r\nContent-Length: \(body.utf8.count)\r\n\r\n\(body)"
         _ = response.withCString { send(clientFD, $0, strlen($0), 0) }
         close(clientFD)
     }
